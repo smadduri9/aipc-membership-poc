@@ -12,7 +12,11 @@ import '../../widgets/avatar.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/status_timeline.dart';
 
-const _rejectReasons = ['Incomplete details', 'Duplicate application', 'Not eligible'];
+const _rejectReasons = [
+  'Incomplete details',
+  'Duplicate application',
+  'Not eligible',
+];
 
 class AdminDetailScreen extends StatelessWidget {
   const AdminDetailScreen({super.key, required this.referenceNo});
@@ -24,7 +28,17 @@ class AdminDetailScreen extends StatelessWidget {
     final repo = context.watch<MockRepository>();
     final app = repo.findByRef(referenceNo);
     return Scaffold(
+      backgroundColor: AppColors.grouped,
       appBar: AppBar(title: Text(referenceNo)),
+      // Primary actions stay pinned above the home indicator instead of scrolling off screen.
+      bottomNavigationBar:
+          app != null && app.status == AppStatus.approvalPending
+          ? Container(
+              color: Colors.white,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: SafeArea(top: false, child: _Actions(app: app)),
+            )
+          : null,
       body: SafeArea(
         child: app == null
             ? const Center(child: Text('Application not found'))
@@ -33,31 +47,62 @@ class AdminDetailScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Avatar(index: app.selfieIndex ?? 0, initials: initialsOf(app.name), size: 64),
+                      Avatar(
+                        index: app.selfieIndex ?? 0,
+                        initials: initialsOf(app.name),
+                        size: 64,
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: Text(app.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                      StatusChip(status: app.status),
+                      Expanded(
+                        child: Text(
+                          app.name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      StatusChip(status: app.status, english: true),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _Field('Phone', app.phone),
-                  _Field('Voter ID', app.voterId ?? '—'),
-                  _Field('Domain', app.domain),
-                  _Field('State', stateNames[app.state] ?? ''),
-                  _Field('Parliamentary', app.parliamentary),
-                  _Field('Assembly', app.assembly),
-                  _Field('PIN code', app.pinCode),
-                  _Field('Referrer', app.referrerPhone ?? '—'),
-                  _Field('Type', app.type == MembershipType.patron ? 'Patron' : 'Ordinary'),
-                  _Field('Amount', formatRupees(app.amount)),
-                  _Field('Payment ID', app.paymentId ?? '—'),
-                  _Field('Created', formatDateTime(app.createdAt)),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _Field('Phone', app.phone),
+                        _Field('Voter ID', app.voterId ?? '—'),
+                        _Field('Domain', app.domain),
+                        _Field('State', stateNames[app.state] ?? ''),
+                        _Field('Parliamentary', app.parliamentary),
+                        _Field('Assembly', app.assembly),
+                        _Field('PIN code', app.pinCode),
+                        _Field('Referrer', app.referrerPhone ?? '—'),
+                        _Field(
+                          'Type',
+                          app.type == MembershipType.patron
+                              ? 'Patron'
+                              : 'Ordinary',
+                        ),
+                        _Field('Amount', formatRupees(app.amount)),
+                        _Field('Payment ID', app.paymentId ?? '—'),
+                        _Field('Created', formatDateTime(app.createdAt)),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 16),
-                  StatusTimeline(app: app),
-                  if (app.status == AppStatus.approvalPending) ...[
-                    const SizedBox(height: 8),
-                    _Actions(app: app),
-                  ],
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: StatusTimeline(app: app, english: true),
+                  ),
                 ],
               ),
       ),
@@ -78,7 +123,10 @@ class _Field extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 120, child: Text(label, style: const TextStyle(color: AppColors.grey))),
+          SizedBox(
+            width: 120,
+            child: Text(label, style: const TextStyle(color: AppColors.grey)),
+          ),
           Expanded(child: Text(value.isEmpty ? '—' : value)),
         ],
       ),
@@ -92,7 +140,8 @@ class _Actions extends StatelessWidget {
   final Application app;
 
   void _toast(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _confirmApprove(BuildContext context) async {
@@ -102,7 +151,10 @@ class _Actions extends StatelessWidget {
         title: const Text('Approve membership?'),
         content: Text(app.referenceNo),
         actions: [
-          CupertinoDialogAction(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text('Cancel')),
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -163,10 +215,16 @@ class _Actions extends StatelessWidget {
         title: const Text('Reason'),
         content: Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: CupertinoTextField(controller: controller, placeholder: 'Enter a reason'),
+          child: CupertinoTextField(
+            controller: controller,
+            placeholder: 'Enter a reason',
+          ),
         ),
         actions: [
-          CupertinoDialogAction(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Cancel')),
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
@@ -188,7 +246,10 @@ class _Actions extends StatelessWidget {
       children: [
         Expanded(
           child: FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.green, minimumSize: const Size.fromHeight(52)),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.green,
+              minimumSize: const Size.fromHeight(52),
+            ),
             onPressed: () => _confirmApprove(context),
             child: const Text('Approve'),
           ),
@@ -196,7 +257,10 @@ class _Actions extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.red, minimumSize: const Size.fromHeight(52)),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.red,
+              minimumSize: const Size.fromHeight(52),
+            ),
             onPressed: () => _chooseReject(context),
             child: const Text('Reject'),
           ),

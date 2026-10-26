@@ -8,7 +8,7 @@ import '../../l10n/strings.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/indian_phone.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
 class PhoneScreen extends StatefulWidget {
@@ -51,20 +51,26 @@ class _PhoneScreenState extends State<PhoneScreen> {
     final showError = text.length == 10 && !isValidMobile(text);
     final canSend = isValidMobile(text) && _consent;
     return Scaffold(
-      appBar: AppBar(actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))]),
+      appBar: AppBar(actions: const [NavActions()]),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(t(context, 'enter_phone'), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.navy)),
+              Text(t(context, 'enter_phone'), style: AppText.largeTitle),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    decoration: BoxDecoration(color: AppColors.sheet, borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.grouped,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: const Text('+91', style: TextStyle(fontSize: 18)),
                   ),
                   const SizedBox(width: 12),
@@ -75,6 +81,13 @@ class _PhoneScreenState extends State<PhoneScreen> {
                       maxLength: 10,
                       placeholder: '9XXXXXXXXX',
                       padding: const EdgeInsets.all(14),
+                      autofillHints: const [
+                        AutofillHints.telephoneNumberNational,
+                      ],
+                      decoration: BoxDecoration(
+                        color: AppColors.grouped,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       style: const TextStyle(fontSize: 18),
                     ),
                   ),
@@ -83,18 +96,27 @@ class _PhoneScreenState extends State<PhoneScreen> {
               if (showError)
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
-                  child: Text(t(context, 'err_phone'), style: const TextStyle(color: AppColors.red)),
+                  child: Text(
+                    t(context, 'err_phone'),
+                    style: const TextStyle(color: AppColors.red),
+                  ),
                 ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  CupertinoSwitch(value: _consent, onChanged: (v) => setState(() => _consent = v)),
+                  CupertinoSwitch(
+                    value: _consent,
+                    onChanged: (v) => setState(() => _consent = v),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(child: Text(t(context, 'consent_text'))),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(t(context, 'demo_phone_hint'), style: const TextStyle(color: AppColors.grey)),
+              Text(
+                t(context, 'demo_phone_hint'),
+                style: const TextStyle(color: AppColors.grey),
+              ),
               const Spacer(),
               PrimaryButton(
                 label: t(context, 'send_otp'),

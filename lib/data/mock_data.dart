@@ -36,7 +36,11 @@ const Map<String, Map<String, List<String>>> constituencies = {
     'Bastar': ['Jagdalpur', 'Bastar', 'Chitrakot'],
   },
   'OD': {
-    'Bhubaneswar': ['Ekamra-Bhubaneswar', 'Bhubaneswar Central', 'Bhubaneswar North'],
+    'Bhubaneswar': [
+      'Ekamra-Bhubaneswar',
+      'Bhubaneswar Central',
+      'Bhubaneswar North',
+    ],
     'Cuttack': ['Cuttack Sadar', 'Cuttack-Barabati', 'Choudwar-Cuttack'],
     'Puri': ['Puri', 'Brahmagiri', 'Pipili'],
     'Sambalpur': ['Sambalpur', 'Rengali', 'Kuchinda'],
@@ -59,8 +63,19 @@ const List<String> professionalDomains = [
 ];
 
 class _SeedRow {
-  const _SeedRow(this.name, this.phone, this.state, this.pc, this.ac, this.domain,
-      this.type, this.amount, this.status, this.daysAgo, [this.rejectReason]);
+  const _SeedRow(
+    this.name,
+    this.phone,
+    this.state,
+    this.pc,
+    this.ac,
+    this.domain,
+    this.type,
+    this.amount,
+    this.status,
+    this.daysAgo, [
+    this.rejectReason,
+  ]);
 
   final String name;
   final String phone;
@@ -76,30 +91,151 @@ class _SeedRow {
 }
 
 const List<_SeedRow> _rows = [
-  _SeedRow('Harpreet Kaur', '9814012345', 'PB', 'Ludhiana', 'Ludhiana West', 'IT Professionals',
-      MembershipType.ordinary, 1000, AppStatus.approvalPending, 1),
-  _SeedRow('Rajesh Meena', '9829023456', 'RJ', 'Jaipur', 'Malviya Nagar', 'Chartered Accountants',
-      MembershipType.ordinary, 1000, AppStatus.approvalPending, 2),
-  _SeedRow('Ananya Mishra', '9826034567', 'MP', 'Bhopal', 'Govindpura', 'Academia',
-      MembershipType.ordinary, 1000, AppStatus.approvalPending, 2),
-  _SeedRow('Sunil Sahu', '9827045678', 'CG', 'Raipur', 'Raipur City West', 'MSME',
-      MembershipType.ordinary, 1000, AppStatus.approved, 5),
-  _SeedRow('Priyanka Patnaik', '9861056789', 'OD', 'Bhubaneswar', 'Bhubaneswar Central', 'Healthcare',
-      MembershipType.ordinary, 1000, AppStatus.approved, 6),
-  _SeedRow('Gurmeet Singh Sandhu', '9815067890', 'PB', 'Amritsar', 'Amritsar Central', 'Legal',
-      MembershipType.patron, 50000, AppStatus.approved, 8),
-  _SeedRow('Kavita Sharma', '9828078901', 'RJ', 'Kota', 'Kota South', 'Financial Services',
-      MembershipType.patron, 100000, AppStatus.approved, 9),
-  _SeedRow('Amit Verma', '9893089012', 'MP', 'Indore', 'Indore-2', 'Architects',
-      MembershipType.ordinary, 1000, AppStatus.rejected, 10, 'Incomplete details'),
-  _SeedRow('Deepak Netam', '9826190123', 'CG', 'Bastar', 'Jagdalpur', 'Agri Professionals',
-      MembershipType.ordinary, 1000, AppStatus.paymentFailed, 3),
-  _SeedRow('Sasmita Behera', '9437101234', 'OD', 'Puri', 'Puri', 'Creative & Media',
-      MembershipType.ordinary, 1000, AppStatus.paymentPending, 0),
-  _SeedRow('Manpreet Gill', '9876112345', 'PB', 'Patiala', 'Rajpura', 'Civil Society & Policy Research',
-      MembershipType.ordinary, 1000, AppStatus.approved, 12),
-  _SeedRow('Neha Tiwari', '9893123456', 'MP', 'Gwalior', 'Gwalior East', 'IT Professionals',
-      MembershipType.ordinary, 1000, AppStatus.approvalPending, 0),
+  _SeedRow(
+    'Harpreet Kaur',
+    '9814012345',
+    'PB',
+    'Ludhiana',
+    'Ludhiana West',
+    'IT Professionals',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approvalPending,
+    1,
+  ),
+  _SeedRow(
+    'Rajesh Meena',
+    '9829023456',
+    'RJ',
+    'Jaipur',
+    'Malviya Nagar',
+    'Chartered Accountants',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approvalPending,
+    2,
+  ),
+  _SeedRow(
+    'Ananya Mishra',
+    '9826034567',
+    'MP',
+    'Bhopal',
+    'Govindpura',
+    'Academia',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approvalPending,
+    2,
+  ),
+  _SeedRow(
+    'Sunil Sahu',
+    '9827045678',
+    'CG',
+    'Raipur',
+    'Raipur City West',
+    'MSME',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approved,
+    5,
+  ),
+  _SeedRow(
+    'Priyanka Patnaik',
+    '9861056789',
+    'OD',
+    'Bhubaneswar',
+    'Bhubaneswar Central',
+    'Healthcare',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approved,
+    6,
+  ),
+  _SeedRow(
+    'Gurmeet Singh Sandhu',
+    '9815067890',
+    'PB',
+    'Amritsar',
+    'Amritsar Central',
+    'Legal',
+    MembershipType.patron,
+    50000,
+    AppStatus.approved,
+    8,
+  ),
+  _SeedRow(
+    'Kavita Sharma',
+    '9828078901',
+    'RJ',
+    'Kota',
+    'Kota South',
+    'Financial Services',
+    MembershipType.patron,
+    100000,
+    AppStatus.approved,
+    9,
+  ),
+  _SeedRow(
+    'Amit Verma',
+    '9893089012',
+    'MP',
+    'Indore',
+    'Indore-2',
+    'Architects',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.rejected,
+    10,
+    'Incomplete details',
+  ),
+  _SeedRow(
+    'Deepak Netam',
+    '9826190123',
+    'CG',
+    'Bastar',
+    'Jagdalpur',
+    'Agri Professionals',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.paymentFailed,
+    3,
+  ),
+  _SeedRow(
+    'Sasmita Behera',
+    '9437101234',
+    'OD',
+    'Puri',
+    'Puri',
+    'Creative & Media',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.paymentPending,
+    0,
+  ),
+  _SeedRow(
+    'Manpreet Gill',
+    '9876112345',
+    'PB',
+    'Patiala',
+    'Rajpura',
+    'Civil Society & Policy Research',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approved,
+    12,
+  ),
+  _SeedRow(
+    'Neha Tiwari',
+    '9893123456',
+    'MP',
+    'Gwalior',
+    'Gwalior East',
+    'IT Professionals',
+    MembershipType.ordinary,
+    1000,
+    AppStatus.approvalPending,
+    0,
+  ),
 ];
 
 /// Builds the 12 seed applications. Row numbers start at 1 and become the reference sequence.
@@ -111,7 +247,8 @@ List<Application> seedApplications() {
     final number = i + 1;
     final created = now.subtract(Duration(days: row.daysAgo));
     final app = Application()
-      ..referenceNo = 'AIPC-${row.state}-26-${number.toString().padLeft(6, '0')}'
+      ..referenceNo =
+          'AIPC-${row.state}-26-${number.toString().padLeft(6, '0')}'
       ..name = row.name
       ..phone = row.phone
       ..domain = row.domain
@@ -144,7 +281,9 @@ List<Application> seedApplications() {
         app.status = AppStatus.approved;
       } else if (row.status == AppStatus.rejected) {
         app.rejectReason = row.rejectReason;
-        app.history.add(StatusEvent(AppStatus.rejected, created, row.rejectReason));
+        app.history.add(
+          StatusEvent(AppStatus.rejected, created, row.rejectReason),
+        );
         app.status = AppStatus.rejected;
       }
     } else {
@@ -161,20 +300,24 @@ List<AuditEntry> seedAuditEntries(List<Application> apps) {
   final entries = <AuditEntry>[];
   for (final app in apps) {
     if (app.status == AppStatus.approved) {
-      entries.add(AuditEntry(
-        at: app.approvedAt!,
-        actor: actor,
-        action: 'Approved',
-        referenceNo: app.referenceNo,
-      ));
+      entries.add(
+        AuditEntry(
+          at: app.approvedAt!,
+          actor: actor,
+          action: 'Approved',
+          referenceNo: app.referenceNo,
+        ),
+      );
     } else if (app.status == AppStatus.rejected) {
-      entries.add(AuditEntry(
-        at: app.history.last.at,
-        actor: actor,
-        action: 'Rejected',
-        referenceNo: app.referenceNo,
-        note: app.rejectReason,
-      ));
+      entries.add(
+        AuditEntry(
+          at: app.history.last.at,
+          actor: actor,
+          action: 'Rejected',
+          referenceNo: app.referenceNo,
+          note: app.rejectReason,
+        ),
+      );
     }
   }
   entries.sort((a, b) => b.at.compareTo(a.at));

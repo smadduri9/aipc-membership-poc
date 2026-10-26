@@ -7,7 +7,7 @@ import '../../l10n/strings.dart';
 import '../../models/application.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/status_chip.dart';
 
@@ -19,13 +19,15 @@ class HomeScreen extends StatelessWidget {
     final appState = context.watch<AppState>();
     final repo = context.watch<MockRepository>();
     final phone = appState.phone;
-    final app = (phone == null || phone.isEmpty) ? null : repo.findByPhone(phone);
+    final app = (phone == null || phone.isEmpty)
+        ? null
+        : repo.findByPhone(phone);
     final name = app?.name ?? t(context, 'member');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('${t(context, 'namaste')}, $name'),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [NavActions()],
       ),
       body: SafeArea(
         child: Padding(
@@ -34,24 +36,29 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (app == null)
-                _BecomeMemberCard(onTap: () {
-                  final state = context.read<AppState>();
-                  state.resetDraft();
-                  state.draft.phone = state.phone ?? '';
-                  context.push('/home/register?step=0');
-                })
+                _BecomeMemberCard(
+                  onTap: () {
+                    final state = context.read<AppState>();
+                    state.resetDraft();
+                    state.draft.phone = state.phone ?? '';
+                    context.push('/home/register?step=0');
+                  },
+                )
               else
                 _StatusCard(app: app),
               const Spacer(),
-              TextButton(onPressed: () => context.push('/admin'), child: const Text('Admin login (demo)')),
+              TextButton(
+                onPressed: () => context.push('/admin'),
+                child: const Text('Admin login (demo)'),
+              ),
               const SizedBox(height: 4),
-              PrimaryButton(
-                label: t(context, 'logout'),
-                color: AppColors.grey,
+              TextButton(
+                style: TextButton.styleFrom(foregroundColor: AppColors.red),
                 onPressed: () {
                   context.read<AppState>().setPhone('');
                   context.go('/phone');
                 },
+                child: Text(t(context, 'logout')),
               ),
             ],
           ),
@@ -73,16 +80,29 @@ class _BecomeMemberCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(color: AppColors.navy, borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(
+          color: AppColors.navy,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Row(
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(t(context, 'become_member'), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                  Text(
+                    t(context, 'become_member'),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(t(context, 'become_member_sub'), style: const TextStyle(color: Colors.white70)),
+                  Text(
+                    t(context, 'become_member_sub'),
+                    style: const TextStyle(color: Colors.white70),
+                  ),
                 ],
               ),
             ),
@@ -110,11 +130,17 @@ class _StatusCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(app.referenceNo, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            app.referenceNo,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           StatusChip(status: app.status),
           const SizedBox(height: 16),
-          PrimaryButton(label: t(context, 'view_status'), onPressed: () => context.push('/home/status')),
+          PrimaryButton(
+            label: t(context, 'view_status'),
+            onPressed: () => context.push('/home/status'),
+          ),
         ],
       ),
     );

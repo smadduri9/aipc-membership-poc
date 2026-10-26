@@ -32,9 +32,20 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('AIPC', style: TextStyle(color: Colors.white, fontSize: 44, fontWeight: FontWeight.bold)),
+              const Text(
+                'AIPC',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 44,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 8),
-              Text(t(context, 'app_subtitle'), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70)),
+              Text(
+                t(context, 'app_subtitle'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white70),
+              ),
               const SizedBox(height: 32),
               const CupertinoActivityIndicator(color: Colors.white),
             ],

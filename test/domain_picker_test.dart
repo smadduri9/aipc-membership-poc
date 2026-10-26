@@ -10,17 +10,16 @@ import 'package:aipc_poc/theme.dart';
 import 'package:aipc_poc/widgets/cupertino_select.dart';
 
 void main() {
-  testWidgets('tapping the professional domain field opens the picker', (tester) async {
+  testWidgets('tapping the professional domain field opens the picker', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => MockRepository()),
           ChangeNotifierProvider(create: (_) => AppState()),
         ],
-        child: MaterialApp(
-          theme: buildTheme(),
-          home: const RegisterScreen(),
-        ),
+        child: MaterialApp(theme: buildTheme(), home: const RegisterScreen()),
       ),
     );
     await tester.pump();
@@ -29,6 +28,6 @@ void main() {
     expect(find.byType(CupertinoPicker), findsOneWidget);
     await tester.tap(find.text('हो गया'));
     await tester.pumpAndSettle();
-    expect(find.text('Civil Society & Policy Research'), findsOneWidget);
+    expect(find.text('नागरिक समाज और नीति अनुसंधान'), findsOneWidget);
   });
 }

@@ -11,7 +11,7 @@ import '../../theme.dart';
 import '../../utils/indian_phone.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/cupertino_select.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/step_progress.dart';
 
@@ -50,7 +50,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _voter = TextEditingController(text: d.voterId ?? '');
     _pin = TextEditingController(text: d.pinCode);
     _referrer = TextEditingController(text: d.referrerPhone ?? '');
-    _amount = TextEditingController(text: d.type == MembershipType.patron ? '${d.amount}' : '');
+    _amount = TextEditingController(
+      text: d.type == MembershipType.patron ? '${d.amount}' : '',
+    );
   }
 
   Application get _draft => context.read<AppState>().draft;
@@ -72,7 +74,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     switch (step) {
       case 0:
         if (d.name.trim().length < 3) _errors['name'] = 'err_name';
-        if (d.voterId != null && d.voterId!.isNotEmpty && !_voterPattern.hasMatch(d.voterId!)) {
+        if (d.voterId != null &&
+            d.voterId!.isNotEmpty &&
+            !_voterPattern.hasMatch(d.voterId!)) {
           _errors['voter'] = 'err_voter';
         }
         if (d.domain.isEmpty) _errors['domain'] = 'err_select';
@@ -82,18 +86,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (d.assembly.isEmpty) _errors['ac'] = 'err_select';
         if (!_pinPattern.hasMatch(d.pinCode)) _errors['pin'] = 'err_pin';
         final referrer = d.referrerPhone ?? '';
-        if (referrer.isNotEmpty && !isValidMobile(referrer)) _errors['referrer'] = 'err_referrer';
+        if (referrer.isNotEmpty && !isValidMobile(referrer)) {
+          _errors['referrer'] = 'err_referrer';
+        }
       case 2:
         if (d.selfieIndex == null) _errors['selfie'] = 'err_selfie';
       case 3:
-        if (d.type == MembershipType.patron && d.amount < _patronMinimum) _errors['amount'] = 'err_amount';
+        if (d.type == MembershipType.patron && d.amount < _patronMinimum) {
+          _errors['amount'] = 'err_amount';
+        }
     }
     return _errors.isEmpty;
   }
 
   void _goToStep(int step) {
     setState(() => _step = step);
-    _pages.animateToPage(step, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+    _pages.animateToPage(
+      step,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
   }
 
   void _back() {
@@ -135,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: _back),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [NavActions()],
       ),
       body: SafeArea(
         child: Column(
@@ -158,23 +170,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  if (_step > 0 || widget.editing)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _back,
-                        style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-                        child: Text(t(context, 'back')),
-                      ),
-                    ),
-                  if (_step > 0 || widget.editing) const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: PrimaryButton(label: t(context, 'next'), onPressed: _next),
-                  ),
-                ],
-              ),
+              child: PrimaryButton(label: t(context, 'next'), onPressed: _next),
             ),
           ],
         ),
@@ -183,32 +179,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _padded(List<Widget> children) => SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
+    ),
+  );
 
   Widget _personalStep(BuildContext context) {
     final d = _draft;
     return _padded([
       TextField(
         controller: _name,
-        decoration: InputDecoration(labelText: '${t(context, 'name')} *', errorText: _err(context, 'name'), border: const OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: '${t(context, 'name')} *',
+          errorText: _err(context, 'name'),
+        ),
         onChanged: (v) => d.name = v,
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 12),
       TextField(
         enabled: false,
         controller: TextEditingController(text: d.phone),
-        decoration: InputDecoration(labelText: t(context, 'phone'), border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: t(context, 'phone')),
       ),
       const SizedBox(height: 16),
       TextField(
         controller: _voter,
         textCapitalization: TextCapitalization.characters,
-        decoration: InputDecoration(labelText: t(context, 'voter_id'), errorText: _err(context, 'voter'), border: const OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: t(context, 'voter_id'),
+          errorText: _err(context, 'voter'),
+        ),
         onChanged: (v) {
           d.voterId = v.toUpperCase();
-          if (_voter.text != d.voterId) _voter.value = _voter.value.copyWith(text: d.voterId);
+          if (_voter.text != d.voterId) {
+            _voter.value = _voter.value.copyWith(text: d.voterId);
+          }
         },
       ),
       const SizedBox(height: 16),
@@ -216,6 +223,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         label: '${t(context, 'domain')} *',
         value: d.domain,
         items: professionalDomains,
+        display: (v) => optionLabel(context.read<AppState>().lang, v),
         error: _err(context, 'domain'),
         onChanged: (v) => setState(() => d.domain = v),
       ),
@@ -224,13 +232,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _locationStep(BuildContext context) {
     final d = _draft;
-    final pcs = d.state.isEmpty ? <String>[] : (constituencies[d.state]?.keys.toList() ?? <String>[]);
-    final acs = d.parliamentary.isEmpty ? <String>[] : (constituencies[d.state]?[d.parliamentary] ?? <String>[]);
+    final pcs = d.state.isEmpty
+        ? <String>[]
+        : (constituencies[d.state]?.keys.toList() ?? <String>[]);
+    final acs = d.parliamentary.isEmpty
+        ? <String>[]
+        : (constituencies[d.state]?[d.parliamentary] ?? <String>[]);
     return _padded([
       CupertinoSelect(
         label: '${t(context, 'state')} *',
         value: d.state.isEmpty ? '' : stateNames[d.state]!,
         items: stateNames.values.toList(),
+        display: (v) => optionLabel(context.read<AppState>().lang, v),
         error: _err(context, 'state'),
         onChanged: (name) => setState(() {
           d.state = stateNames.entries.firstWhere((e) => e.value == name).key;
@@ -264,7 +277,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         controller: _pin,
         keyboardType: TextInputType.number,
         maxLength: 6,
-        decoration: InputDecoration(labelText: '${t(context, 'pin_code')} *', errorText: _err(context, 'pin'), border: const OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: '${t(context, 'pin_code')} *',
+          errorText: _err(context, 'pin'),
+        ),
         onChanged: (v) => d.pinCode = v,
       ),
       const SizedBox(height: 16),
@@ -272,7 +288,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         controller: _referrer,
         keyboardType: TextInputType.number,
         maxLength: 10,
-        decoration: InputDecoration(labelText: t(context, 'referrer'), errorText: _err(context, 'referrer'), border: const OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: t(context, 'referrer'),
+          errorText: _err(context, 'referrer'),
+        ),
         onChanged: (v) => d.referrerPhone = v.isEmpty ? null : v,
       ),
     ]);
@@ -289,11 +308,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Container(
             width: 160,
             height: 160,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.sheet, border: Border.all(color: Colors.grey.shade300)),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.sheet,
+              border: Border.all(color: Colors.grey.shade300),
+            ),
             alignment: Alignment.center,
             child: chosen == null
-                ? const Icon(CupertinoIcons.camera, size: 48, color: AppColors.grey)
-                : Avatar(index: chosen, initials: initialsOf(d.name), size: 160),
+                ? const Icon(
+                    CupertinoIcons.camera,
+                    size: 48,
+                    color: AppColors.grey,
+                  )
+                : Avatar(
+                    index: chosen,
+                    initials: initialsOf(d.name),
+                    size: 160,
+                  ),
           ),
         ),
       ),
@@ -305,20 +336,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
       if (_errors.containsKey('selfie'))
-        Center(child: Text(_err(context, 'selfie')!, style: const TextStyle(color: AppColors.red))),
+        Center(
+          child: Text(
+            _err(context, 'selfie')!,
+            style: const TextStyle(color: AppColors.red),
+          ),
+        ),
     ]);
   }
 
   Future<void> _pickSelfie(BuildContext context) async {
-    final doneLabel = tRead(context, 'done');
+    final title = tRead(context, 'take_selfie');
+    final cancel = tRead(context, 'cancel');
     final initials = initialsOf(_draft.name);
     await showCupertinoModalPopup<void>(
       context: context,
-      builder: (sheetContext) => Container(
-        color: CupertinoColors.systemBackground.resolveFrom(sheetContext),
-        padding: const EdgeInsets.all(24),
-        child: SafeArea(
-          top: false,
+      builder: (sheetContext) => CupertinoActionSheet(
+        title: Text(title),
+        message: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -331,17 +367,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     });
                     Navigator.of(sheetContext).pop();
                   },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Avatar(index: i, initials: initials, size: 80),
-                      const SizedBox(height: 6),
-                      Text(doneLabel, style: const TextStyle(color: AppColors.grey)),
-                    ],
-                  ),
+                  child: Avatar(index: i, initials: initials, size: 72),
                 ),
             ],
           ),
+        ),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.of(sheetContext).pop(),
+          child: Text(cancel),
         ),
       ),
     );
@@ -377,18 +410,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
         TextField(
           controller: _amount,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(labelText: '${t(context, 'amount')} *', errorText: _err(context, 'amount'), border: const OutlineInputBorder()),
+          decoration: InputDecoration(
+            labelText: '${t(context, 'amount')} *',
+            errorText: _err(context, 'amount'),
+          ),
           onChanged: (v) => d.amount = int.tryParse(v) ?? 0,
         ),
         const SizedBox(height: 8),
-        Text(t(context, 'duration_tbc'), style: const TextStyle(color: AppColors.grey)),
+        Text(
+          t(context, 'duration_tbc'),
+          style: const TextStyle(color: AppColors.grey),
+        ),
       ],
     ]);
   }
 }
 
 class _TypeCard extends StatelessWidget {
-  const _TypeCard({required this.selected, required this.title, required this.subtitle, required this.onTap});
+  const _TypeCard({
+    required this.selected,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   final bool selected;
   final String title;
@@ -403,7 +447,10 @@ class _TypeCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: selected ? AppColors.navy : Colors.grey.shade300, width: 2),
+          border: Border.all(
+            color: selected ? AppColors.navy : Colors.grey.shade300,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -412,13 +459,20 @@ class _TypeCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(subtitle, style: const TextStyle(color: AppColors.grey)),
                 ],
               ),
             ),
-            if (selected) const Icon(Icons.check_circle, color: AppColors.green),
+            if (selected)
+              const Icon(Icons.check_circle, color: AppColors.green),
           ],
         ),
       ),

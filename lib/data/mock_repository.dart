@@ -8,9 +8,7 @@ import 'mock_data.dart';
 /// In-memory stand-in for a backend. Every call waits briefly so the UI feels real.
 /// Data resets when the app restarts.
 class MockRepository extends ChangeNotifier {
-  MockRepository()
-      : applications = seedApplications(),
-        auditLog = [] {
+  MockRepository() : applications = seedApplications(), auditLog = [] {
     auditLog.addAll(seedAuditEntries(applications));
   }
 
@@ -32,10 +30,11 @@ class MockRepository extends ChangeNotifier {
 
   /// Latest non-draft application for this phone, or null.
   Application? findByPhone(String phone) {
-    final matches = applications
-        .where((a) => a.phone == phone && a.status != AppStatus.draft)
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final matches =
+        applications
+            .where((a) => a.phone == phone && a.status != AppStatus.draft)
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return matches.isEmpty ? null : matches.first;
   }
 
@@ -83,7 +82,11 @@ class MockRepository extends ChangeNotifier {
   }
 
   /// Synchronous search over non-draft applications, newest first.
-  List<Application> search({String? state, AppStatus? status, String query = ''}) {
+  List<Application> search({
+    String? state,
+    AppStatus? status,
+    String query = '',
+  }) {
     final q = query.trim().toLowerCase();
     final result = applications.where((a) {
       if (a.status == AppStatus.draft) return false;
@@ -93,8 +96,7 @@ class MockRepository extends ChangeNotifier {
       return a.referenceNo.toLowerCase().contains(q) ||
           a.phone.startsWith(q) ||
           a.name.toLowerCase().contains(q);
-    }).toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    }).toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return result;
   }
 
@@ -160,7 +162,11 @@ class MockRepository extends ChangeNotifier {
   }
 
   String _randomCode(int length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    return List.generate(length, (_) => chars[_random.nextInt(chars.length)]).join();
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    return List.generate(
+      length,
+      (_) => chars[_random.nextInt(chars.length)],
+    ).join();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../theme.dart';
 
 /// Full-width navy button. Shows a spinner and disables itself while [loading].
@@ -22,17 +23,25 @@ class PrimaryButton extends StatelessWidget {
     final enabled = onPressed != null && !loading;
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: 50,
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         onPressed: enabled ? onPressed : null,
         child: loading
             ? const CupertinoActivityIndicator(color: Colors.white)
-            : Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            : Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     );
   }

@@ -14,7 +14,12 @@ class AdminAuditScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Audit log'),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: Center(child: DemoBadge()),
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView.separated(
@@ -25,7 +30,11 @@ class AdminAuditScreen extends StatelessWidget {
             return ListTile(
               title: Text('${e.action} · ${e.referenceNo}'),
               subtitle: Text(
-                [formatDateTime(e.at), e.actor, if (e.note != null) e.note!].join('\n'),
+                [
+                  formatDateTime(e.at),
+                  e.actor,
+                  if (e.note != null) e.note!,
+                ].join('\n'),
               ),
               isThreeLine: e.note != null,
             );

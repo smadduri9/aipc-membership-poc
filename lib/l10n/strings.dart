@@ -80,6 +80,8 @@ const Map<String, Map<String, String>> strings = {
     'share': 'Share',
     'share_disabled': 'Sharing is disabled in the demo',
     'done': 'Done',
+    'cancel': 'Cancel',
+    'payment_pending': 'Payment pending',
     'membership_no': 'Membership No.',
     'payment_id': 'Payment ID',
     'reference_no': 'Reference number',
@@ -99,7 +101,8 @@ const Map<String, Map<String, String>> strings = {
     'continue': 'आगे बढ़ें',
     'enter_phone': 'अपना मोबाइल नंबर दर्ज करें',
     'err_phone': 'मान्य 10 अंकों का मोबाइल नंबर दर्ज करें',
-    'consent_text': 'मैं सदस्यता के लिए AIPC के साथ अपनी जानकारी साझा करने के लिए सहमत हूँ',
+    'consent_text':
+        'मैं सदस्यता के लिए AIPC के साथ अपनी जानकारी साझा करने के लिए सहमत हूँ',
     'demo_phone_hint': 'डेमो: 9876543210 का उपयोग करें',
     'send_otp': 'OTP भेजें',
     'enter_otp': 'इस नंबर पर भेजा गया 6 अंकों का कोड दर्ज करें',
@@ -167,6 +170,8 @@ const Map<String, Map<String, String>> strings = {
     'share': 'साझा करें',
     'share_disabled': 'डेमो में साझा करना बंद है',
     'done': 'हो गया',
+    'cancel': 'रद्द करें',
+    'payment_pending': 'भुगतान बाकी',
     'membership_no': 'सदस्यता संख्या',
     'payment_id': 'भुगतान आईडी',
     'reference_no': 'संदर्भ संख्या',
@@ -191,6 +196,7 @@ const Map<String, Map<String, String>> strings = {
     'become_member': 'ਮੈਂਬਰ ਬਣੋ',
     'next': 'ਅਗਲਾ',
     'back': 'ਪਿੱਛੇ',
+    'cancel': 'ਰੱਦ ਕਰੋ',
   },
   'or': {
     'choose_language': 'ଭାଷା ବାଛନ୍ତୁ',
@@ -203,6 +209,7 @@ const Map<String, Map<String, String>> strings = {
     'become_member': 'ସଦସ୍ୟ ହୁଅନ୍ତୁ',
     'next': 'ପରବର୍ତ୍ତୀ',
     'back': 'ପଛକୁ',
+    'cancel': 'ବାତିଲ୍',
   },
 };
 
@@ -224,3 +231,46 @@ String tRead(BuildContext context, String key) {
   final lang = context.read<AppState>().lang;
   return translate(lang, key);
 }
+
+/// Display labels for stored option values (professional domains and states). Values stay in
+/// English so admin screens and CSV exports are consistent; members see them in their language.
+/// Constituency names are proper nouns and are shown as stored.
+const Map<String, Map<String, String>> optionLabels = {
+  'hi': {
+    'Civil Society & Policy Research': 'नागरिक समाज और नीति अनुसंधान',
+    'IT Professionals': 'आईटी पेशेवर',
+    'Chartered Accountants': 'चार्टर्ड अकाउंटेंट',
+    'Architects': 'वास्तुकार',
+    'Academia': 'शिक्षा जगत',
+    'Healthcare': 'स्वास्थ्य सेवा',
+    'Financial Services': 'वित्तीय सेवाएँ',
+    'Agri Professionals': 'कृषि पेशेवर',
+    'MSME': 'एमएसएमई',
+    'Legal': 'विधि / कानूनी',
+    'Creative & Media': 'रचनात्मक और मीडिया',
+    'Other': 'अन्य',
+    'Punjab': 'पंजाब',
+    'Rajasthan': 'राजस्थान',
+    'Madhya Pradesh': 'मध्य प्रदेश',
+    'Chhattisgarh': 'छत्तीसगढ़',
+    'Odisha': 'ओडिशा',
+  },
+  'pa': {
+    'Punjab': 'ਪੰਜਾਬ',
+    'Rajasthan': 'ਰਾਜਸਥਾਨ',
+    'Madhya Pradesh': 'ਮੱਧ ਪ੍ਰਦੇਸ਼',
+    'Chhattisgarh': 'ਛੱਤੀਸਗੜ੍ਹ',
+    'Odisha': 'ਓਡੀਸ਼ਾ',
+  },
+  'or': {
+    'Punjab': 'ପଞ୍ଜାବ',
+    'Rajasthan': 'ରାଜସ୍ଥାନ',
+    'Madhya Pradesh': 'ମଧ୍ୟପ୍ରଦେଶ',
+    'Chhattisgarh': 'ଛତିଶଗଡ଼',
+    'Odisha': 'ଓଡ଼ିଶା',
+  },
+};
+
+/// Label for a stored option value in [lang]. Pure, so it is safe in pickers and callbacks.
+String optionLabel(String lang, String value) =>
+    optionLabels[lang]?[value] ?? value;
