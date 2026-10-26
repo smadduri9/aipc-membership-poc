@@ -36,13 +36,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late final PageController _pages = PageController(initialPage: _step);
   final Map<String, String> _errors = {};
 
-  late final TextEditingController _name = TextEditingController(text: _draft.name);
-  late final TextEditingController _voter = TextEditingController(text: _draft.voterId ?? '');
-  late final TextEditingController _pin = TextEditingController(text: _draft.pinCode);
-  late final TextEditingController _referrer = TextEditingController(text: _draft.referrerPhone ?? '');
-  late final TextEditingController _amount = TextEditingController(
-    text: _draft.type == MembershipType.patron ? '${_draft.amount}' : '',
-  );
+  late final TextEditingController _name;
+  late final TextEditingController _voter;
+  late final TextEditingController _pin;
+  late final TextEditingController _referrer;
+  late final TextEditingController _amount;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = context.read<AppState>().draft;
+    _name = TextEditingController(text: d.name);
+    _voter = TextEditingController(text: d.voterId ?? '');
+    _pin = TextEditingController(text: d.pinCode);
+    _referrer = TextEditingController(text: d.referrerPhone ?? '');
+    _amount = TextEditingController(text: d.type == MembershipType.patron ? '${d.amount}' : '');
+  }
 
   Application get _draft => context.read<AppState>().draft;
 
@@ -301,7 +310,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _pickSelfie(BuildContext context) async {
-    final doneLabel = t(context, 'done');
+    final doneLabel = tRead(context, 'done');
     final initials = initialsOf(_draft.name);
     await showCupertinoModalPopup<void>(
       context: context,

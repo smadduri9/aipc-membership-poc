@@ -218,3 +218,9 @@ String t(BuildContext context, String key, {Map<String, String>? params}) {
   final lang = context.watch<AppState>().lang;
   return translate(lang, key, params: params);
 }
+
+/// For event handlers and async code, where watching is not allowed. Reads the language without rebuilding.
+String tRead(BuildContext context, String key) {
+  final lang = context.read<AppState>().lang;
+  return translate(lang, key);
+}
