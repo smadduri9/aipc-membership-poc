@@ -48,9 +48,9 @@ class PaymentResultScreen extends StatelessWidget {
                 Text(t(context, 'no_money_deducted'), textAlign: TextAlign.center, style: const TextStyle(color: AppColors.grey)),
               const Spacer(),
               if (success)
-                PrimaryButton(label: t(context, 'track_status'), onPressed: () => context.go('/status'))
+                PrimaryButton(label: t(context, 'track_status'), onPressed: () => context.go('/home/status'))
               else ...[
-                PrimaryButton(label: t(context, 'retry_payment'), onPressed: () => context.go('/payment')),
+                PrimaryButton(label: t(context, 'retry_payment'), onPressed: () => context.go('/home/payment')),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),

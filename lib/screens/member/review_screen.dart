@@ -29,7 +29,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     setState(() => _submitting = true);
     await context.read<MockRepository>().submit(draft);
     if (!mounted) return;
-    context.go('/payment');
+    context.go('/home/payment');
   }
 
   @override
@@ -132,7 +132,7 @@ class _Section extends StatelessWidget {
             children: [
               Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.navy))),
               TextButton(
-                onPressed: () => context.push('/register?step=$step&edit=1'),
+                onPressed: () => context.push('/home/register?step=$step&edit=1'),
                 child: Text(t(context, 'edit')),
               ),
             ],
@@ -171,7 +171,7 @@ class _SelfieSection extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(child: Text(t(context, 'step_selfie'), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.navy))),
           TextButton(
-            onPressed: () => context.push('/register?step=2&edit=1'),
+            onPressed: () => context.push('/home/register?step=2&edit=1'),
             child: Text(t(context, 'edit')),
           ),
         ],

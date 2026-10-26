@@ -29,6 +29,14 @@ class AdminDashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
+        leading: IconButton(
+          tooltip: 'Back to member app',
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            final signedIn = context.read<AppState>().phone?.isNotEmpty ?? false;
+            context.go(signedIn ? '/home' : '/phone');
+          },
+        ),
         actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
       ),
       body: SafeArea(
@@ -59,11 +67,11 @@ class AdminDashboardScreen extends StatelessWidget {
                 trailing: Text('${entry.value}', style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             const SizedBox(height: 16),
-            PrimaryButton(label: 'Applications', onPressed: () => context.push('/admin/list')),
+            PrimaryButton(label: 'Applications', onPressed: () => context.push('/admin/dashboard/list')),
             const SizedBox(height: 8),
             OutlinedButton(
               style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-              onPressed: () => context.push('/admin/audit'),
+              onPressed: () => context.push('/admin/dashboard/audit'),
               child: const Text('Audit log'),
             ),
             const SizedBox(height: 8),

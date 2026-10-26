@@ -32,14 +32,14 @@ class StatusScreen extends StatelessWidget {
           children: [
             _ReferenceRow(referenceNo: app.referenceNo),
             const SizedBox(height: 12),
-            StatusChip(status: app.status),
+            Align(alignment: Alignment.centerLeft, child: StatusChip(status: app.status)),
             const SizedBox(height: 20),
             StatusTimeline(app: app),
             if (app.status == AppStatus.paymentFailed)
-              PrimaryButton(label: t(context, 'retry_payment'), onPressed: () => context.go('/payment')),
+              PrimaryButton(label: t(context, 'retry_payment'), onPressed: () => context.go('/home/payment')),
             if (app.status == AppStatus.approved) ...[
               const SizedBox(height: 8),
-              PrimaryButton(label: t(context, 'view_card'), onPressed: () => context.push('/card')),
+              PrimaryButton(label: t(context, 'view_card'), onPressed: () => context.push('/home/status/card')),
             ],
           ],
         ),

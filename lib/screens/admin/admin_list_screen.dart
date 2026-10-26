@@ -174,7 +174,7 @@ class _ApplicationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => context.push('/admin/detail/${app.referenceNo}'),
+      onTap: () => context.push('/admin/dashboard/detail/${app.referenceNo}'),
       leading: Avatar(index: app.selfieIndex ?? 0, initials: initialsOf(app.name), size: 44),
       title: Text(app.name, style: const TextStyle(fontWeight: FontWeight.w600)),
       subtitle: Text('${app.referenceNo} · ${app.state} · ${formatDate(app.createdAt)}'),

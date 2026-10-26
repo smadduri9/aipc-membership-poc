@@ -42,7 +42,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
     if (!mounted) return;
     context.read<AppState>().setPhone(phone);
     setState(() => _sending = false);
-    context.go('/otp');
+    context.push('${GoRouterState.of(context).matchedLocation}/otp');
   }
 
   @override

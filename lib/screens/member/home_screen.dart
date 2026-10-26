@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                   final state = context.read<AppState>();
                   state.resetDraft();
                   state.draft.phone = state.phone ?? '';
-                  context.push('/register?step=0');
+                  context.push('/home/register?step=0');
                 })
               else
                 _StatusCard(app: app),
@@ -114,7 +114,7 @@ class _StatusCard extends StatelessWidget {
           const SizedBox(height: 8),
           StatusChip(status: app.status),
           const SizedBox(height: 16),
-          PrimaryButton(label: t(context, 'view_status'), onPressed: () => context.push('/status')),
+          PrimaryButton(label: t(context, 'view_status'), onPressed: () => context.push('/home/status')),
         ],
       ),
     );

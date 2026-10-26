@@ -31,7 +31,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     await context.read<MockRepository>().fakePay(draft.referenceNo, success: success);
     if (!mounted) return;
     setState(() => _processing = false);
-    context.go('/payment-result?success=$success');
+    context.go('/home/payment-result?success=$success');
   }
 
   Widget _option(String label) {
@@ -58,7 +58,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       backgroundColor: AppColors.sheet,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leadingWidth: 80,
+        leading: TextButton(
+          onPressed: _processing ? null : () => context.go('/home'),
+          child: const Text('Cancel'),
+        ),
         title: const Text('Payment'),
         actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
       ),
