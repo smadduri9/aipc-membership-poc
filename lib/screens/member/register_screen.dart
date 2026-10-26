@@ -115,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else if (_step < 3) {
       _goToStep(_step + 1);
     } else {
-      context.push('/review');
+      context.push('/home/review');
     }
   }
 
