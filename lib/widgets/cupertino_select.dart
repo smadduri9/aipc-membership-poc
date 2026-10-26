@@ -27,7 +27,7 @@ class CupertinoSelect extends StatelessWidget {
     if (!enabled || items.isEmpty) return;
     final initial = items.contains(value) ? items.indexOf(value) : 0;
     var chosen = initial;
-    final doneLabel = t(context, 'done');
+    final doneLabel = tRead(context, 'done');
     await showCupertinoModalPopup<void>(
       context: context,
       builder: (sheetContext) => Container(
