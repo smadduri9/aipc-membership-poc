@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 
 import 'screens/member/home_screen.dart';
+import 'screens/member/register_screen.dart';
+import 'screens/member/review_screen.dart';
 import 'screens/member/language_screen.dart';
 import 'screens/member/otp_screen.dart';
 import 'screens/member/phone_screen.dart';
@@ -16,8 +18,14 @@ GoRouter buildRouter() {
       GoRoute(path: '/phone', builder: (context, state) => const PhoneScreen()),
       GoRoute(path: '/otp', builder: (context, state) => const OtpScreen()),
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-      GoRoute(path: '/register', builder: (context, state) => const PlaceholderScreen(title: 'Register')),
-      GoRoute(path: '/review', builder: (context, state) => const PlaceholderScreen(title: 'Review')),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => RegisterScreen(
+          initialStep: int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
+          editing: state.uri.queryParameters['edit'] == '1',
+        ),
+      ),
+      GoRoute(path: '/review', builder: (context, state) => const ReviewScreen()),
       GoRoute(path: '/payment', builder: (context, state) => const PlaceholderScreen(title: 'Payment')),
       GoRoute(path: '/payment-result', builder: (context, state) => const PlaceholderScreen(title: 'Payment result')),
       GoRoute(path: '/status', builder: (context, state) => const PlaceholderScreen(title: 'Status')),
