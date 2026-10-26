@@ -14,6 +14,7 @@ class CupertinoSelect extends StatelessWidget {
     required this.onChanged,
     this.enabled = true,
     this.error,
+    this.display,
   });
 
   final String label;
@@ -22,6 +23,11 @@ class CupertinoSelect extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final bool enabled;
   final String? error;
+
+  /// Converts a stored value into the label shown to the user, e.g. a translation.
+  final String Function(String value)? display;
+
+  String _label(String value) => display?.call(value) ?? value;
 
   Future<void> _open(BuildContext context) async {
     if (!enabled || items.isEmpty) return;
@@ -48,9 +54,13 @@ class CupertinoSelect extends StatelessWidget {
             Expanded(
               child: CupertinoPicker(
                 itemExtent: 36,
-                scrollController: FixedExtentScrollController(initialItem: initial),
+                scrollController: FixedExtentScrollController(
+                  initialItem: initial,
+                ),
                 onSelectedItemChanged: (index) => chosen = index,
-                children: [for (final item in items) Center(child: Text(item))],
+                children: [
+                  for (final item in items) Center(child: Text(_label(item))),
+                ],
               ),
             ),
           ],
@@ -71,11 +81,10 @@ class CupertinoSelect extends StatelessWidget {
           decoration: InputDecoration(
             labelText: label,
             errorText: error,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             suffixIcon: const Icon(CupertinoIcons.chevron_down, size: 18),
           ),
           child: Text(
-            hasValue ? value : t(context, 'select'),
+            hasValue ? _label(value) : t(context, 'select'),
             style: TextStyle(color: hasValue ? Colors.black : AppColors.grey),
           ),
         ),

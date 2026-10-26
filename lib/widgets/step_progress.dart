@@ -15,7 +15,10 @@ class StepProgress extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(t(context, 'step_of', params: {'x': '${current + 1}'}), style: const TextStyle(color: AppColors.grey)),
+        Text(
+          t(context, 'step_of', params: {'x': '${current + 1}'}),
+          style: const TextStyle(color: AppColors.grey),
+        ),
         const SizedBox(height: 6),
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
@@ -27,7 +30,14 @@ class StepProgress extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.navy)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: AppColors.navy,
+          ),
+        ),
       ],
     );
   }

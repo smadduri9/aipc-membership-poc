@@ -7,7 +7,7 @@ import '../../data/mock_repository.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/format.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 
 /// Fake Razorpay-style checkout. The sheet is English only, as a real gateway would be.
 class PaymentScreen extends StatefulWidget {
@@ -28,7 +28,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
     setState(() => _processing = true);
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
-    await context.read<MockRepository>().fakePay(draft.referenceNo, success: success);
+    await context.read<MockRepository>().fakePay(
+      draft.referenceNo,
+      success: success,
+    );
     if (!mounted) return;
     setState(() => _processing = false);
     context.go('/home/payment-result?success=$success');
@@ -43,10 +46,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: selected ? Colors.blue : Colors.grey.shade300, width: selected ? 2 : 1),
+          border: Border.all(
+            color: selected ? Colors.blue : Colors.grey.shade300,
+            width: selected ? 2 : 1,
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(label, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600)),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }
@@ -64,7 +74,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           child: const Text('Cancel'),
         ),
         title: const Text('Payment'),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [NavActions(showLanguage: false)],
       ),
       body: Stack(
         children: [
@@ -76,15 +86,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       child: ListView(
                         children: [
-                          const Text('Payment Options', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Payment Options',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 6),
-                          Text(formatRupees(draft.amount), style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.navy)),
-                          Text('Ref: ${draft.referenceNo}', style: const TextStyle(color: AppColors.grey)),
+                          Text(
+                            formatRupees(draft.amount),
+                            style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.navy,
+                            ),
+                          ),
+                          Text(
+                            'Ref: ${draft.referenceNo}',
+                            style: const TextStyle(color: AppColors.grey),
+                          ),
                           const SizedBox(height: 16),
-                          const Text('UPI', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const Text(
+                            'UPI',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 8),
                           GridView.count(
                             crossAxisCount: 2,
@@ -96,7 +128,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             children: [for (final u in _upi) _option(u)],
                           ),
                           const SizedBox(height: 12),
-                          for (final r in _rows) Padding(padding: const EdgeInsets.only(bottom: 8), child: _option(r)),
+                          for (final r in _rows)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: _option(r),
+                            ),
                         ],
                       ),
                     ),
@@ -104,13 +140,28 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Expanded(child: _actionButton('Simulate failure', AppColors.red, ready ? () => _pay(success: false) : null)),
+                      Expanded(
+                        child: _actionButton(
+                          'Simulate failure',
+                          AppColors.red,
+                          ready ? () => _pay(success: false) : null,
+                        ),
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: _actionButton('Simulate success', AppColors.green, ready ? () => _pay(success: true) : null)),
+                      Expanded(
+                        child: _actionButton(
+                          'Simulate success',
+                          AppColors.green,
+                          ready ? () => _pay(success: true) : null,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text('Demo only. No money is charged.', style: TextStyle(color: AppColors.grey)),
+                  const Text(
+                    'Demo only. No money is charged.',
+                    style: TextStyle(color: AppColors.grey),
+                  ),
                 ],
               ),
             ),
@@ -124,7 +175,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   CupertinoActivityIndicator(color: Colors.white, radius: 14),
                   SizedBox(height: 12),
-                  Text('Processing…', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  Text(
+                    'Processing…',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ],
               ),
             ),
@@ -135,7 +189,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   Widget _actionButton(String label, Color color, VoidCallback? onPressed) {
     return FilledButton(
-      style: FilledButton.styleFrom(backgroundColor: color, minimumSize: const Size.fromHeight(52)),
+      style: FilledButton.styleFrom(
+        backgroundColor: color,
+        minimumSize: const Size.fromHeight(52),
+      ),
       onPressed: onPressed,
       child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
     );

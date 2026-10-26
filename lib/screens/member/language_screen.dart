@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -5,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/strings.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
 const _languages = [
@@ -22,14 +23,14 @@ class LanguageScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     return Scaffold(
-      appBar: AppBar(actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))]),
+      appBar: AppBar(actions: const [NavActions(showLanguage: false)]),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(t(context, 'choose_language'), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.navy)),
+              Text(t(context, 'choose_language'), style: AppText.largeTitle),
               const SizedBox(height: 24),
               for (final (code, label) in _languages)
                 Padding(
@@ -41,20 +42,37 @@ class LanguageScreen extends StatelessWidget {
                       height: 64,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        border: Border.all(color: state.lang == code ? AppColors.navy : Colors.grey.shade300, width: 2),
+                        border: Border.all(
+                          color: state.lang == code
+                              ? AppColors.navy
+                              : Colors.grey.shade300,
+                          width: 2,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          Expanded(child: Text(label, style: const TextStyle(fontSize: 20))),
-                          if (state.lang == code) const Icon(Icons.check_circle, color: AppColors.green),
+                          Expanded(
+                            child: Text(
+                              label,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          if (state.lang == code)
+                            const Icon(
+                              CupertinoIcons.checkmark_alt,
+                              color: AppColors.navy,
+                            ),
                         ],
                       ),
                     ),
                   ),
                 ),
               const Spacer(),
-              PrimaryButton(label: t(context, 'continue'), onPressed: () => context.push('/language/phone')),
+              PrimaryButton(
+                label: t(context, 'continue'),
+                onPressed: () => context.push('/language/phone'),
+              ),
             ],
           ),
         ),

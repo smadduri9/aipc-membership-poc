@@ -11,7 +11,7 @@ import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/avatar.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
 class ReviewScreen extends StatefulWidget {
@@ -36,9 +36,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget build(BuildContext context) {
     final d = context.watch<AppState>().draft;
     return Scaffold(
+      backgroundColor: AppColors.grouped,
       appBar: AppBar(
         title: Text(t(context, 'review')),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [NavActions()],
       ),
       body: SafeArea(
         child: Column(
@@ -54,14 +55,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       (t(context, 'name'), d.name),
                       (t(context, 'phone'), d.phone),
                       (t(context, 'voter_id'), d.voterId ?? '—'),
-                      (t(context, 'domain'), d.domain),
+                      (
+                        t(context, 'domain'),
+                        optionLabel(context.read<AppState>().lang, d.domain),
+                      ),
                     ],
                   ),
                   _Section(
                     title: t(context, 'step_location'),
                     step: 1,
                     rows: [
-                      (t(context, 'state'), stateNames[d.state] ?? ''),
+                      (
+                        t(context, 'state'),
+                        optionLabel(
+                          context.read<AppState>().lang,
+                          stateNames[d.state] ?? '',
+                        ),
+                      ),
                       (t(context, 'parliamentary'), d.parliamentary),
                       (t(context, 'assembly'), d.assembly),
                       (t(context, 'pin_code'), d.pinCode),
@@ -74,7 +84,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     step: 3,
                     rows: [
                       (
-                        t(context, d.type == MembershipType.patron ? 'patron' : 'ordinary'),
+                        t(
+                          context,
+                          d.type == MembershipType.patron
+                              ? 'patron'
+                              : 'ordinary',
+                        ),
                         formatRupees(d.amount),
                       ),
                     ],
@@ -82,22 +97,29 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      CupertinoSwitch(value: _confirmed, onChanged: (v) => setState(() => _confirmed = v)),
+                      CupertinoSwitch(
+                        value: _confirmed,
+                        onChanged: (v) => setState(() => _confirmed = v),
+                      ),
                       const SizedBox(width: 8),
                       Expanded(child: Text(t(context, 'confirm_details'))),
                     ],
                   ),
                   const SizedBox(height: 12),
                   PrimaryButton(
-                    label: '${t(context, 'submit_pay')} ${formatRupees(d.amount)}',
+                    label:
+                        '${t(context, 'submit_pay')} ${formatRupees(d.amount)}',
                     loading: _submitting,
-                    onPressed: _confirmed && !_submitting ? () => _submit(d) : null,
+                    onPressed: _confirmed && !_submitting
+                        ? () => _submit(d)
+                        : null,
                   ),
                 ],
               ),
@@ -122,7 +144,7 @@ class _Section extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.sheet,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -130,9 +152,18 @@ class _Section extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.navy))),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.navy,
+                  ),
+                ),
+              ),
               TextButton(
-                onPressed: () => context.push('/home/register?step=$step&edit=1'),
+                onPressed: () =>
+                    context.push('/home/register?step=$step&edit=1'),
                 child: Text(t(context, 'edit')),
               ),
             ],
@@ -143,7 +174,13 @@ class _Section extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 130, child: Text(label, style: const TextStyle(color: AppColors.grey))),
+                  SizedBox(
+                    width: 130,
+                    child: Text(
+                      label,
+                      style: const TextStyle(color: AppColors.grey),
+                    ),
+                  ),
                   Expanded(child: Text(value.isEmpty ? '—' : value)),
                 ],
               ),
@@ -164,12 +201,27 @@ class _SelfieSection extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: AppColors.sheet, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         children: [
-          Avatar(index: draft.selfieIndex ?? 0, initials: initialsOf(draft.name), size: 56),
+          Avatar(
+            index: draft.selfieIndex ?? 0,
+            initials: initialsOf(draft.name),
+            size: 56,
+          ),
           const SizedBox(width: 16),
-          Expanded(child: Text(t(context, 'step_selfie'), style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.navy))),
+          Expanded(
+            child: Text(
+              t(context, 'step_selfie'),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AppColors.navy,
+              ),
+            ),
+          ),
           TextButton(
             onPressed: () => context.push('/home/register?step=2&edit=1'),
             child: Text(t(context, 'edit')),

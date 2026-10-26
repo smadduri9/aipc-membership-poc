@@ -33,7 +33,10 @@ GoRouter buildRouter() {
             path: 'phone',
             builder: (context, state) => const PhoneScreen(),
             routes: [
-              GoRoute(path: 'otp', builder: (context, state) => const OtpScreen()),
+              GoRoute(
+                path: 'otp',
+                builder: (context, state) => const OtpScreen(),
+              ),
             ],
           ),
         ],
@@ -52,21 +55,33 @@ GoRouter buildRouter() {
           GoRoute(
             path: 'register',
             builder: (context, state) => RegisterScreen(
-              initialStep: int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
+              initialStep:
+                  int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
               editing: state.uri.queryParameters['edit'] == '1',
             ),
           ),
-          GoRoute(path: 'review', builder: (context, state) => const ReviewScreen()),
-          GoRoute(path: 'payment', builder: (context, state) => const PaymentScreen()),
+          GoRoute(
+            path: 'review',
+            builder: (context, state) => const ReviewScreen(),
+          ),
+          GoRoute(
+            path: 'payment',
+            builder: (context, state) => const PaymentScreen(),
+          ),
           GoRoute(
             path: 'payment-result',
-            builder: (context, state) => PaymentResultScreen(success: state.uri.queryParameters['success'] == 'true'),
+            builder: (context, state) => PaymentResultScreen(
+              success: state.uri.queryParameters['success'] == 'true',
+            ),
           ),
           GoRoute(
             path: 'status',
             builder: (context, state) => const StatusScreen(),
             routes: [
-              GoRoute(path: 'card', builder: (context, state) => const MembershipCardScreen()),
+              GoRoute(
+                path: 'card',
+                builder: (context, state) => const MembershipCardScreen(),
+              ),
             ],
           ),
         ],
@@ -79,12 +94,20 @@ GoRouter buildRouter() {
             path: 'dashboard',
             builder: (context, state) => const AdminDashboardScreen(),
             routes: [
-              GoRoute(path: 'list', builder: (context, state) => const AdminListScreen()),
+              GoRoute(
+                path: 'list',
+                builder: (context, state) => const AdminListScreen(),
+              ),
               GoRoute(
                 path: 'detail/:ref',
-                builder: (context, state) => AdminDetailScreen(referenceNo: state.pathParameters['ref'] ?? ''),
+                builder: (context, state) => AdminDetailScreen(
+                  referenceNo: state.pathParameters['ref'] ?? '',
+                ),
               ),
-              GoRoute(path: 'audit', builder: (context, state) => const AdminAuditScreen()),
+              GoRoute(
+                path: 'audit',
+                builder: (context, state) => const AdminAuditScreen(),
+              ),
             ],
           ),
         ],

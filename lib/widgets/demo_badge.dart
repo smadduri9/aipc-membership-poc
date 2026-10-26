@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme.dart';
 
 /// Marks every screen as sample-data demo output.
@@ -15,7 +16,11 @@ class DemoBadge extends StatelessWidget {
       ),
       child: const Text(
         'DEMO • Sample data',
-        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

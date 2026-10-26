@@ -33,7 +33,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       _loading = true;
       _failed = false;
     });
-    final ok = await context.read<MockRepository>().adminLogin(_email.text.trim(), _password.text);
+    final ok = await context.read<MockRepository>().adminLogin(
+      _email.text.trim(),
+      _password.text,
+    );
     if (!mounted) return;
     setState(() => _loading = false);
     if (ok) {
@@ -49,7 +52,12 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin login'),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: Center(child: DemoBadge()),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -59,26 +67,37 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               TextField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Email'),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _password,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Password'),
               ),
               if (_failed)
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
-                  child: Text('Wrong email or password', style: TextStyle(color: AppColors.red)),
+                  child: Text(
+                    'Wrong email or password',
+                    style: TextStyle(color: AppColors.red),
+                  ),
                 ),
               const SizedBox(height: 8),
-              const Text('Demo: admin@aipc.demo / demo1234', style: TextStyle(color: AppColors.grey)),
+              const Text(
+                'Demo: admin@aipc.demo / demo1234',
+                style: TextStyle(color: AppColors.grey),
+              ),
               const SizedBox(height: 16),
-              PrimaryButton(label: 'Log in', loading: _loading, onPressed: _loading ? null : _login),
+              PrimaryButton(
+                label: 'Log in',
+                loading: _loading,
+                onPressed: _loading ? null : _login,
+              ),
               TextButton(
                 onPressed: () {
-                  final signedIn = context.read<AppState>().phone?.isNotEmpty ?? false;
+                  final signedIn =
+                      context.read<AppState>().phone?.isNotEmpty ?? false;
                   context.go(signedIn ? '/home' : '/phone');
                 },
                 child: const Text('Back to member app'),

@@ -22,12 +22,16 @@ void main() {
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => MockRepository()),
-            ChangeNotifierProvider(create: (_) => AppState()..setPhone('9876543210')),
+            ChangeNotifierProvider(
+              create: (_) => AppState()..setPhone('9876543210'),
+            ),
           ],
           child: MaterialApp.router(routerConfig: router),
         ),
       );
-      await tester.pump(const Duration(seconds: 2)); // let the splash timer fire
+      await tester.pump(
+        const Duration(seconds: 2),
+      ); // let the splash timer fire
       router.go(location);
       await tester.pump(const Duration(milliseconds: 500));
       expect(router.canPop(), isTrue);

@@ -46,7 +46,12 @@ class _AdminListScreenState extends State<AdminListScreen> {
         content: Container(
           height: 240,
           margin: const EdgeInsets.only(top: 12),
-          child: SingleChildScrollView(child: Text(csv, style: const TextStyle(fontSize: 11, fontFamily: 'Courier'))),
+          child: SingleChildScrollView(
+            child: Text(
+              csv,
+              style: const TextStyle(fontSize: 11, fontFamily: 'Courier'),
+            ),
+          ),
         ),
         actions: [
           CupertinoDialogAction(
@@ -69,12 +74,19 @@ class _AdminListScreenState extends State<AdminListScreen> {
   @override
   Widget build(BuildContext context) {
     final repo = context.watch<MockRepository>();
-    final results = repo.search(state: _stateCode, status: _status, query: _query.text);
+    final results = repo.search(
+      state: _stateCode,
+      status: _status,
+      query: _query.text,
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Applications'),
         actions: [
-          TextButton(onPressed: () => _showCsv(context, repo.exportCsv()), child: const Text('Export CSV')),
+          TextButton(
+            onPressed: () => _showCsv(context, repo.exportCsv()),
+            child: const Text('Export CSV'),
+          ),
         ],
       ),
       body: SafeArea(
@@ -107,7 +119,11 @@ class _AdminListScreenState extends State<AdminListScreen> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ActionChip(
-                      label: Text(_stateCode == null ? 'State: All' : 'State: ${stateNames[_stateCode]}'),
+                      label: Text(
+                        _stateCode == null
+                            ? 'State: All'
+                            : 'State: ${stateNames[_stateCode]}',
+                      ),
                       onPressed: () => _pickState(context),
                     ),
                   ),
@@ -117,11 +133,14 @@ class _AdminListScreenState extends State<AdminListScreen> {
             const SizedBox(height: 8),
             Expanded(
               child: results.isEmpty
-                  ? const Center(child: Text('No applications match these filters.'))
+                  ? const Center(
+                      child: Text('No applications match these filters.'),
+                    )
                   : ListView.separated(
                       itemCount: results.length,
                       separatorBuilder: (_, _) => const Divider(height: 1),
-                      itemBuilder: (context, i) => _ApplicationRow(app: results[i]),
+                      itemBuilder: (context, i) =>
+                          _ApplicationRow(app: results[i]),
                     ),
             ),
           ],
@@ -155,7 +174,12 @@ class _AdminListScreenState extends State<AdminListScreen> {
                 itemExtent: 36,
                 onSelectedItemChanged: (index) => chosen = index,
                 children: [
-                  for (final code in codes) Center(child: Text(code == null ? 'All states' : stateNames[code]!)),
+                  for (final code in codes)
+                    Center(
+                      child: Text(
+                        code == null ? 'All states' : stateNames[code]!,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -175,14 +199,23 @@ class _ApplicationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => context.push('/admin/dashboard/detail/${app.referenceNo}'),
-      leading: Avatar(index: app.selfieIndex ?? 0, initials: initialsOf(app.name), size: 44),
-      title: Text(app.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-      subtitle: Text('${app.referenceNo} · ${app.state} · ${formatDate(app.createdAt)}'),
+      leading: Avatar(
+        index: app.selfieIndex ?? 0,
+        initials: initialsOf(app.name),
+        size: 44,
+      ),
+      title: Text(
+        app.name,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        '${app.referenceNo} · ${app.state} · ${formatDate(app.createdAt)}',
+      ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          StatusChip(status: app.status),
+          StatusChip(status: app.status, english: true),
           const SizedBox(height: 4),
           Text(formatRupees(app.amount), style: const TextStyle(fontSize: 12)),
         ],

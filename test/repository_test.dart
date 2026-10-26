@@ -11,11 +11,14 @@ Application _draft() => Application()
   ..amount = 1000;
 
 void main() {
-  test('submit assigns the first reference number after the seed data', () async {
-    final repo = MockRepository();
-    final app = await repo.submit(_draft());
-    expect(app.referenceNo, 'AIPC-PB-26-000101');
-  });
+  test(
+    'submit assigns the first reference number after the seed data',
+    () async {
+      final repo = MockRepository();
+      final app = await repo.submit(_draft());
+      expect(app.referenceNo, 'AIPC-PB-26-000101');
+    },
+  );
 
   test('verifyOtp accepts only the demo code', () async {
     final repo = MockRepository();
@@ -29,6 +32,9 @@ void main() {
     await repo.fakePay(app.referenceNo, success: true);
     await repo.approve(app.referenceNo, 'admin@aipc.demo');
     expect(app.status, AppStatus.approved);
-    expect(app.validUntil!.difference(app.approvedAt!), const Duration(days: 730));
+    expect(
+      app.validUntil!.difference(app.approvedAt!),
+      const Duration(days: 730),
+    );
   });
 }

@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:aipc_poc/main.dart';
 
 void main() {
-  testWidgets('member can log in with demo credentials and reach home', (tester) async {
+  testWidgets('member can log in with demo credentials and reach home', (
+    tester,
+  ) async {
     await tester.pumpWidget(const AipcApp());
     await tester.pump(const Duration(milliseconds: 1600));
 
@@ -38,11 +40,9 @@ void main() {
     await tester.pump();
     expect(find.text('गलत कोड। फिर से प्रयास करें।'), findsOneWidget);
 
-    final fresh = find.byType(CupertinoTextField);
-    for (final (i, digit) in '123456'.split('').indexed) {
-      await tester.enterText(fresh.at(i), digit);
-      await tester.pump();
-    }
+    // Pasting the whole code into the first box fills every box, as iOS SMS autofill does.
+    await tester.enterText(find.byType(CupertinoTextField).first, '123456');
+    await tester.pump();
     await tester.tap(find.text('सत्यापित करें'));
     await tester.pump(const Duration(milliseconds: 700));
     await tester.pump();

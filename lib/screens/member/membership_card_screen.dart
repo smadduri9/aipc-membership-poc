@@ -11,7 +11,7 @@ import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/avatar.dart';
-import '../../widgets/demo_badge.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
 class MembershipCardScreen extends StatelessWidget {
@@ -23,10 +23,7 @@ class MembershipCardScreen extends StatelessWidget {
     final repo = context.watch<MockRepository>();
     final app = repo.findByPhone(phone);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AIPC'),
-        actions: const [Padding(padding: EdgeInsets.only(right: 12), child: Center(child: DemoBadge()))],
-      ),
+      appBar: AppBar(title: const Text('AIPC'), actions: const [NavActions()]),
       body: SafeArea(
         child: app == null
             ? const Center(child: Text('—'))
@@ -66,28 +63,56 @@ class _CardFace extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [AppColors.navy, Color(0xFF3A4B8C)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+          gradient: const LinearGradient(
+            colors: [AppColors.navy, Color(0xFF3A4B8C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('AIPC', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-            Text(t(context, 'app_subtitle'), style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            const Text(
+              'AIPC',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              t(context, 'app_subtitle'),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
             const Spacer(),
             Row(
               children: [
-                Avatar(index: app.selfieIndex ?? 0, initials: initialsOf(app.name), size: 52),
+                Avatar(
+                  index: app.selfieIndex ?? 0,
+                  initials: initialsOf(app.name),
+                  size: 52,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(app.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    app.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text('${t(context, 'membership_no')} ${app.referenceNo}', style: const TextStyle(color: Colors.white)),
             Text(
-              '${t(context, app.type == MembershipType.patron ? 'patron' : 'ordinary')} · ${stateNames[app.state] ?? ''}',
+              '${t(context, 'membership_no')} ${app.referenceNo}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            Text(
+              '${t(context, app.type == MembershipType.patron ? 'patron' : 'ordinary')} · ${optionLabel(context.read<AppState>().lang, stateNames[app.state] ?? '')}',
               style: const TextStyle(color: Colors.white70),
             ),
             Text(validity, style: const TextStyle(color: Colors.white70)),
