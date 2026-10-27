@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:aipc_poc/main.dart';
 
 void main() {
-  testWidgets('app starts and shows AIPC splash', (tester) async {
+  testWidgets('app opens on the landing page', (tester) async {
     await tester.pumpWidget(const AipcApp());
-    expect(find.text('AIPC'), findsWidgets);
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pumpAndSettle();
+    expect(find.text('AICP'), findsWidgets);
   });
 }

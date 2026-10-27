@@ -6,6 +6,7 @@ import 'screens/admin/admin_detail_screen.dart';
 import 'screens/admin/admin_list_screen.dart';
 import 'screens/admin/admin_login_screen.dart';
 import 'screens/member/home_screen.dart';
+import 'screens/member/landing_screen.dart';
 import 'screens/member/language_screen.dart';
 import 'screens/member/membership_card_screen.dart';
 import 'screens/member/otp_screen.dart';
@@ -14,7 +15,7 @@ import 'screens/member/payment_screen.dart';
 import 'screens/member/phone_screen.dart';
 import 'screens/member/register_screen.dart';
 import 'screens/member/review_screen.dart';
-import 'screens/member/splash_screen.dart';
+import 'screens/member/role_screen.dart';
 import 'screens/member/status_screen.dart';
 
 /// Member screens are nested under /home and admin screens under /admin/dashboard, so `context.go`
@@ -24,11 +25,15 @@ GoRouter buildRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(path: '/', builder: (context, state) => const LandingScreen()),
       GoRoute(
         path: '/language',
         builder: (context, state) => const LanguageScreen(),
         routes: [
+          GoRoute(
+            path: 'role',
+            builder: (context, state) => const RoleScreen(),
+          ),
           GoRoute(
             path: 'phone',
             builder: (context, state) => const PhoneScreen(),

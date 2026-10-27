@@ -8,6 +8,23 @@ import '../state/app_state.dart';
 const Map<String, Map<String, String>> strings = {
   'en': {
     'app_subtitle': "All India Professionals' Congress",
+    'landing_title': 'AICP',
+    'landing_full_name': 'All India Congress Party',
+    'landing_card_1_title': 'Who we are',
+    'landing_card_1_body':
+        'Professionals stepping into public life and policy.',
+    'landing_card_2_title': 'Why join',
+    'landing_card_2_body':
+        'Connect with professionals in your state and shape policy.',
+    'landing_card_3_title': 'How it works',
+    'landing_card_3_body':
+        'Register, get approved by your state team, then activate.',
+    'next': 'Next',
+    'role_title': 'How would you like to continue?',
+    'role_member_title': 'Member',
+    'role_member_sub': 'Apply for membership or track your application',
+    'role_admin_title': 'Admin',
+    'role_admin_sub': 'State representatives and AICP office',
     'choose_language': 'Choose your language',
     'continue': 'Continue',
     'enter_phone': 'Enter your mobile number',
@@ -53,7 +70,6 @@ const Map<String, Map<String, String>> strings = {
     'amount': 'Amount (₹)',
     'duration_tbc': 'Duration to be confirmed',
     'back': 'Back',
-    'next': 'Next',
     'review': 'Review your details',
     'edit': 'Edit',
     'confirm_details': 'I confirm these details are correct',
@@ -97,6 +113,22 @@ const Map<String, Map<String, String>> strings = {
   },
   'hi': {
     'app_subtitle': 'अखिल भारतीय प्रोफेशनल्स कांग्रेस',
+    'landing_title': 'AICP',
+    'landing_full_name': 'All India Congress Party',
+    'landing_card_1_title': 'हम कौन हैं',
+    'landing_card_1_body': 'पेशेवर सार्वजनिक जीवन और नीति में आगे आते हैं।',
+    'landing_card_2_title': 'क्यों जुड़ें',
+    'landing_card_2_body':
+        'अपने राज्य के पेशेवरों से जुड़ें और नीति को आकार दें।',
+    'landing_card_3_title': 'यह कैसे काम करता है',
+    'landing_card_3_body':
+        'पंजीकरण करें, राज्य टीम से स्वीकृति लें, फिर सदस्यता सक्रिय करें।',
+    'next': 'आगे',
+    'role_title': 'आप आगे कैसे बढ़ना चाहेंगे?',
+    'role_member_title': 'सदस्य',
+    'role_member_sub': 'सदस्यता के लिए आवेदन करें या अपना आवेदन देखें',
+    'role_admin_title': 'एडमिन',
+    'role_admin_sub': 'राज्य प्रतिनिधि और AICP कार्यालय',
     'choose_language': 'अपनी भाषा चुनें',
     'continue': 'आगे बढ़ें',
     'enter_phone': 'अपना मोबाइल नंबर दर्ज करें',
@@ -143,7 +175,6 @@ const Map<String, Map<String, String>> strings = {
     'amount': 'राशि (₹)',
     'duration_tbc': 'अवधि की पुष्टि होनी बाकी है',
     'back': 'पीछे',
-    'next': 'आगे',
     'review': 'अपना विवरण जाँचें',
     'edit': 'बदलें',
     'confirm_details': 'मैं पुष्टि करता/करती हूँ कि यह विवरण सही है',
