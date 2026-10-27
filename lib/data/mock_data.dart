@@ -1,12 +1,9 @@
 import '../models/application.dart';
+import 'reference_data.dart';
 
 /// Sample data only. Names, phone numbers and constituency names are fictional.
-const Map<String, String> stateNames = {
-  'PB': 'Punjab',
-  'RJ': 'Rajasthan',
-  'MP': 'Madhya Pradesh',
-  'CG': 'Chhattisgarh',
-  'OD': 'Odisha',
+final Map<String, String> stateNames = {
+  for (final r in regions) r.code: r.name,
 };
 
 /// stateCode -> parliamentary constituency -> assembly constituencies.
@@ -47,21 +44,6 @@ const Map<String, Map<String, List<String>>> constituencies = {
   },
 };
 
-const List<String> professionalDomains = [
-  'Civil Society & Policy Research',
-  'IT Professionals',
-  'Chartered Accountants',
-  'Architects',
-  'Academia',
-  'Healthcare',
-  'Financial Services',
-  'Agri Professionals',
-  'MSME',
-  'Legal',
-  'Creative & Media',
-  'Other',
-];
-
 class _SeedRow {
   const _SeedRow(
     this.name,
@@ -98,9 +80,9 @@ const List<_SeedRow> _rows = [
     'Ludhiana',
     'Ludhiana West',
     'IT Professionals',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
-    AppStatus.approvalPending,
+    AppStatus.submitted,
     1,
   ),
   _SeedRow(
@@ -110,9 +92,9 @@ const List<_SeedRow> _rows = [
     'Jaipur',
     'Malviya Nagar',
     'Chartered Accountants',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
-    AppStatus.approvalPending,
+    AppStatus.submitted,
     2,
   ),
   _SeedRow(
@@ -122,9 +104,9 @@ const List<_SeedRow> _rows = [
     'Bhopal',
     'Govindpura',
     'Academia',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
-    AppStatus.approvalPending,
+    AppStatus.submitted,
     2,
   ),
   _SeedRow(
@@ -134,7 +116,7 @@ const List<_SeedRow> _rows = [
     'Raipur',
     'Raipur City West',
     'MSME',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
     AppStatus.approved,
     5,
@@ -146,7 +128,7 @@ const List<_SeedRow> _rows = [
     'Bhubaneswar',
     'Bhubaneswar Central',
     'Healthcare',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
     AppStatus.approved,
     6,
@@ -182,7 +164,7 @@ const List<_SeedRow> _rows = [
     'Indore',
     'Indore-2',
     'Architects',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
     AppStatus.rejected,
     10,
@@ -195,7 +177,7 @@ const List<_SeedRow> _rows = [
     'Bastar',
     'Jagdalpur',
     'Agri Professionals',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
     AppStatus.paymentFailed,
     3,
@@ -207,9 +189,9 @@ const List<_SeedRow> _rows = [
     'Puri',
     'Puri',
     'Creative & Media',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
-    AppStatus.paymentPending,
+    AppStatus.submitted,
     0,
   ),
   _SeedRow(
@@ -219,7 +201,7 @@ const List<_SeedRow> _rows = [
     'Patiala',
     'Rajpura',
     'Civil Society & Policy Research',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
     AppStatus.approved,
     12,
@@ -231,9 +213,9 @@ const List<_SeedRow> _rows = [
     'Gwalior',
     'Gwalior East',
     'IT Professionals',
-    MembershipType.ordinary,
+    MembershipType.aicpMember,
     1000,
-    AppStatus.approvalPending,
+    AppStatus.submitted,
     0,
   ),
 ];
@@ -242,64 +224,115 @@ const List<_SeedRow> _rows = [
 List<Application> seedApplications() {
   final now = DateTime.now();
   final result = <Application>[];
-  for (var i = 0; i < _rows.length; i++) {
-    final row = _rows[i];
+  final rows = [..._rows, ..._generatedRows()];
+  for (var i = 0; i < rows.length; i++) {
+    final row = rows[i];
     final number = i + 1;
     final created = now.subtract(Duration(days: row.daysAgo));
+    final parts = row.name.split(' ');
     final app = Application()
       ..referenceNo =
           'AIPC-${row.state}-26-${number.toString().padLeft(6, '0')}'
-      ..name = row.name
+      ..firstName = parts.first
+      ..lastName = parts.sublist(1).join(' ')
       ..phone = row.phone
-      ..domain = row.domain
+      ..aadhaarMasked = 'XXXX XXXX ${1000 + number}'
+      ..professionalDomain = row.domain
       ..state = row.state
+      ..district = regionByCode(row.state)?.districts.first ?? ''
+      ..cityVillage = row.ac
       ..parliamentary = row.pc
       ..assembly = row.ac
       ..pinCode = '14${number.toString().padLeft(4, '0')}'
       ..selfieIndex = number % 3
+      ..instagramUrl = 'https://www.instagram.com/demo${number}member'
       ..type = row.type
       ..amount = row.amount
       ..createdAt = created;
 
-    final pending = StatusEvent(AppStatus.paymentPending, created);
-    app.history.add(pending);
-    if (row.status == AppStatus.paymentFailed) {
-      app.status = AppStatus.paymentFailed;
-      app.history.add(StatusEvent(AppStatus.paymentFailed, created));
-    } else if (row.status != AppStatus.paymentPending) {
-      app.paymentId = 'pay_DemoSeed$number';
-      app.history.add(StatusEvent(AppStatus.paymentVerified, created));
-      app.history.add(StatusEvent(AppStatus.approvalPending, created));
-      app.status = AppStatus.approvalPending;
-      if (row.status == AppStatus.approved) {
+    app.history.add(StatusEvent(AppStatus.submitted, created));
+    switch (row.status) {
+      case AppStatus.paymentFailed:
+        app.status = AppStatus.paymentFailed;
+        app.history.add(StatusEvent(AppStatus.paymentFailed, created));
+      case AppStatus.approved || AppStatus.awaitingPayment || AppStatus.active:
         final approved = created.add(const Duration(days: 1));
         app.approvedAt = approved;
-        app.validUntil = row.type == MembershipType.ordinary
-            ? approved.add(const Duration(days: 730))
-            : null;
+        app.reviewedBy = 'state.rep@aipc.demo';
         app.history.add(StatusEvent(AppStatus.approved, approved));
         app.status = AppStatus.approved;
-      } else if (row.status == AppStatus.rejected) {
+        if (row.status == AppStatus.active) {
+          app.paymentId = 'pay_DemoSeed$number';
+          app.validUntil = row.type == MembershipType.aicpMember
+              ? approved.add(const Duration(days: 730))
+              : null;
+          app.history.add(StatusEvent(AppStatus.active, approved));
+          app.status = AppStatus.active;
+        }
+      case AppStatus.rejected:
         app.rejectReason = row.rejectReason;
         app.history.add(
           StatusEvent(AppStatus.rejected, created, row.rejectReason),
         );
         app.status = AppStatus.rejected;
-      }
-    } else {
-      app.status = AppStatus.paymentPending;
+      default:
+        app.status = AppStatus.submitted;
     }
     result.add(app);
   }
   return result;
 }
 
+/// Two applications for each state or UT that has no hand-written rows, so every state dashboard has data.
+List<_SeedRow> _generatedRows() {
+  const handWritten = {'PB', 'RJ', 'MP', 'CG', 'OD'};
+  final rows = <_SeedRow>[];
+  for (final region in regions) {
+    if (handWritten.contains(region.code)) continue;
+    for (var n = 1; n <= 2; n++) {
+      rows.add(
+        _SeedRow(
+          'Demo Member ${region.code}$n',
+          '${900000000 + regions.indexOf(region) * 10 + n}',
+          region.code,
+          '',
+          '',
+          professionalDomains[(n + region.code.length) %
+              professionalDomains.length],
+          n == 1 ? MembershipType.aicpMember : MembershipType.patron,
+          n == 1 ? 1000 : 50000,
+          n == 1 ? AppStatus.submitted : AppStatus.active,
+          n * 5,
+        ),
+      );
+    }
+  }
+  return rows;
+}
+
+/// Demo admin accounts: one master, and one state representative per state or UT.
+/// Every password is demo1234.
+final List<AdminUser> adminUsers = [
+  const AdminUser(
+    email: 'master@aipc.demo',
+    name: 'Master',
+    role: AdminRole.master,
+  ),
+  for (final r in regions)
+    AdminUser(
+      email: '${r.code.toLowerCase()}@aipc.demo',
+      name: '${r.name} Representative',
+      role: AdminRole.stateRep,
+      stateCode: r.code,
+    ),
+];
+
 /// Five approvals and one rejection from earlier, newest first.
 List<AuditEntry> seedAuditEntries(List<Application> apps) {
-  const actor = 'chairperson.office@aipc.demo';
+  const actor = 'state.rep@aipc.demo';
   final entries = <AuditEntry>[];
   for (final app in apps) {
-    if (app.status == AppStatus.approved) {
+    if (app.approvedAt != null) {
       entries.add(
         AuditEntry(
           at: app.approvedAt!,

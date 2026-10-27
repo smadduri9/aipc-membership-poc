@@ -20,23 +20,20 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final (color, label) = switch (status) {
       AppStatus.draft => (AppColors.grey, 'Draft'),
-      AppStatus.paymentPending => (
-        AppColors.grey,
-        _label(context, 'payment_pending'),
+      AppStatus.submitted || AppStatus.underReview => (
+        AppColors.saffron,
+        _label(context, 'st_awaiting'),
+      ),
+      AppStatus.approved => (AppColors.green, _label(context, 'st_approved')),
+      AppStatus.awaitingPayment => (
+        AppColors.saffron,
+        _label(context, 'st_awaiting_payment'),
       ),
       AppStatus.paymentFailed => (
         AppColors.red,
         _label(context, 'payment_failed'),
       ),
-      AppStatus.paymentVerified => (
-        AppColors.saffron,
-        _label(context, 'st_verified'),
-      ),
-      AppStatus.approvalPending => (
-        AppColors.saffron,
-        _label(context, 'st_awaiting'),
-      ),
-      AppStatus.approved => (AppColors.green, _label(context, 'st_approved')),
+      AppStatus.active => (AppColors.green, _label(context, 'st_active')),
       AppStatus.rejected => (AppColors.red, _label(context, 'st_rejected')),
     };
     return Container(

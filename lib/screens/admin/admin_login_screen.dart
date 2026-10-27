@@ -39,8 +39,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     );
     if (!mounted) return;
     setState(() => _loading = false);
-    if (ok) {
-      context.read<AppState>().adminSignIn(_email.text.trim());
+    if (ok != null) {
+      context.read<AppState>().adminSignIn(ok);
       context.go('/admin/dashboard');
     } else {
       setState(() => _failed = true);

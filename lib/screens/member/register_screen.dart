@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_data.dart';
+import '../../data/reference_data.dart';
 import '../../l10n/strings.dart';
 import '../../models/application.dart';
 import '../../state/app_state.dart';
@@ -79,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             !_voterPattern.hasMatch(d.voterId!)) {
           _errors['voter'] = 'err_voter';
         }
-        if (d.domain.isEmpty) _errors['domain'] = 'err_select';
+        if (d.professionalDomain.isEmpty) _errors['domain'] = 'err_select';
       case 1:
         if (d.state.isEmpty) _errors['state'] = 'err_select';
         if (d.parliamentary.isEmpty) _errors['pc'] = 'err_select';
@@ -221,11 +222,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       const SizedBox(height: 16),
       CupertinoSelect(
         label: '${t(context, 'domain')} *',
-        value: d.domain,
+        value: d.professionalDomain,
         items: professionalDomains,
         display: (v) => optionLabel(context.read<AppState>().lang, v),
         error: _err(context, 'domain'),
-        onChanged: (v) => setState(() => d.domain = v),
+        onChanged: (v) => setState(() => d.professionalDomain = v),
       ),
     ]);
   }
@@ -389,7 +390,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         title: t(context, 'ordinary'),
         subtitle: t(context, 'ordinary_price'),
         onTap: () => setState(() {
-          d.type = MembershipType.ordinary;
+          d.type = MembershipType.aicpMember;
           d.amount = 1000;
           _amount.clear();
         }),
