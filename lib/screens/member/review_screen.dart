@@ -54,7 +54,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     rows: [
                       (t(context, 'name'), d.name),
                       (t(context, 'phone'), d.phone),
-                      (t(context, 'voter_id'), d.voterId ?? '—'),
                       (
                         t(context, 'domain'),
                         optionLabel(
@@ -78,7 +77,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       (t(context, 'parliamentary'), d.parliamentary),
                       (t(context, 'assembly'), d.assembly),
                       (t(context, 'pin_code'), d.pinCode),
-                      (t(context, 'referrer'), d.referrerPhone ?? '—'),
                     ],
                   ),
                   _SelfieSection(draft: d),

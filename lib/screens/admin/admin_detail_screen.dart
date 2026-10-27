@@ -74,13 +74,11 @@ class AdminDetailScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         _Field('Phone', app.phone),
-                        _Field('Voter ID', app.voterId ?? '—'),
                         _Field('Domain', app.professionalDomain),
                         _Field('State', stateNames[app.state] ?? ''),
                         _Field('Parliamentary', app.parliamentary),
                         _Field('Assembly', app.assembly),
                         _Field('PIN code', app.pinCode),
-                        _Field('Referrer', app.referrerPhone ?? '—'),
                         _Field(
                           'Type',
                           app.type == MembershipType.patron

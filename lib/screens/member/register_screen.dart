@@ -1,444 +1,611 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/mock_data.dart';
+import '../../data/mock_repository.dart';
+import '../../data/pincode_lookup.dart';
 import '../../data/reference_data.dart';
 import '../../l10n/strings.dart';
 import '../../models/application.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
-import '../../utils/indian_phone.dart';
-import '../../widgets/avatar.dart';
+import '../../utils/aadhaar.dart';
+import '../../utils/social_link.dart';
 import '../../widgets/cupertino_select.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/selfie_capture.dart';
 import '../../widgets/step_progress.dart';
 
-final _voterPattern = RegExp(r'^[A-Z]{3}\d{7}$');
-final _pinPattern = RegExp(r'^\d{6}$');
-const _patronMinimum = 50000;
-
-/// Four-step membership form. Values are written straight into [AppState.draft],
-/// so they survive Back/Next and the Edit links on the review screen.
+/// Three-step membership application. Steps: identity and domain, location, then selfie and social links.
+/// Values are written into [AppState.draft] as the member goes, so Back keeps them.
+/// Payment and membership type come later, after approval.
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key, this.initialStep = 0, this.editing = false});
+  const RegisterScreen({super.key, this.initialStep = 0});
 
   final int initialStep;
-  final bool editing;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late int _step = widget.initialStep.clamp(0, 3);
-  late final PageController _pages = PageController(initialPage: _step);
+  late int _step = widget.initialStep.clamp(0, 2);
   final Map<String, String> _errors = {};
 
-  late final TextEditingController _name;
-  late final TextEditingController _voter;
-  late final TextEditingController _pin;
-  late final TextEditingController _referrer;
-  late final TextEditingController _amount;
+  // Identity
+  final _first = TextEditingController();
+  final _last = TextEditingController();
+  final _aadhaar = TextEditingController();
+  final _domainOther = TextEditingController();
+
+  // Location
+  final _pin = TextEditingController();
+  final _stateOther = TextEditingController();
+  final _districtOther = TextEditingController();
+  final _tehsil = TextEditingController();
+  final _block = TextEditingController();
+  final _city = TextEditingController();
+  final _pc = TextEditingController();
+  final _ac = TextEditingController();
+
+  // Social
+  final _instagram = TextEditingController();
+  final _linkedin = TextEditingController();
+  final _facebook = TextEditingController();
+
+  PinIndex? _pinIndex;
+  List<PinRecord> _pinOffices = const [];
+  bool _prefilled = false;
+  bool _consent = false;
+  bool _submitting = false;
 
   @override
   void initState() {
     super.initState();
     final d = context.read<AppState>().draft;
-    _name = TextEditingController(text: d.name);
-    _voter = TextEditingController(text: d.voterId ?? '');
-    _pin = TextEditingController(text: d.pinCode);
-    _referrer = TextEditingController(text: d.referrerPhone ?? '');
-    _amount = TextEditingController(
-      text: d.type == MembershipType.patron ? '${d.amount}' : '',
-    );
+    _first.text = d.firstName;
+    _last.text = d.lastName;
+    _domainOther.text = d.professionalDomainOther ?? '';
+    _pin.text = d.pinCode;
+    _stateOther.text = d.stateOther ?? '';
+    _districtOther.text = d.districtOther ?? '';
+    _tehsil.text = d.tehsil ?? '';
+    _block.text = d.block ?? '';
+    _city.text = d.cityVillage;
+    _pc.text = d.parliamentary;
+    _ac.text = d.assembly;
+    _instagram.text = d.instagramUrl ?? '';
+    _linkedin.text = d.linkedinUrl ?? '';
+    _facebook.text = d.facebookUrl ?? '';
+    PinIndex.load().then((index) {
+      if (mounted) setState(() => _pinIndex = index);
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final c in [
+      _first,
+      _last,
+      _aadhaar,
+      _domainOther,
+      _pin,
+      _stateOther,
+      _districtOther,
+      _tehsil,
+      _block,
+      _city,
+      _pc,
+      _ac,
+      _instagram,
+      _linkedin,
+      _facebook,
+    ]) {
+      c.dispose();
+    }
+    super.dispose();
   }
 
   Application get _draft => context.read<AppState>().draft;
 
-  @override
-  void dispose() {
-    _pages.dispose();
-    _name.dispose();
-    _voter.dispose();
-    _pin.dispose();
-    _referrer.dispose();
-    _amount.dispose();
-    super.dispose();
+  String? _err(String key) =>
+      _errors[key] == null ? null : tRead(context, _errors[key]!);
+
+  /// Applies a PIN lookup: state, district and block are filled from the post office.
+  void _onPinChanged(String value) {
+    final d = _draft;
+    d.pinCode = value;
+    _pinOffices = const [];
+    if (value.length == 6 && _pinIndex != null) {
+      final offices = _pinIndex!.forPin(value);
+      if (offices.isNotEmpty) {
+        _applyOffice(offices.first);
+        _pinOffices = offices;
+        _prefilled = false;
+      }
+    }
+    setState(() {});
   }
 
-  bool _validate(int step) {
+  void _applyOffice(PinRecord r) {
+    final d = _draft;
+    d.state = r.state;
+    d.stateOther = null;
+    _stateOther.clear();
+    d.district = r.district;
+    d.districtOther = null;
+    _districtOther.clear();
+    d.block = r.block;
+    _block.text = r.block;
+    d.cityVillage = r.office;
+    _city.text = r.office;
+  }
+
+  /// Demo only: pretends to read the address from Aadhaar.
+  void _prefillFromAadhaar() {
+    final repo = context.read<MockRepository>();
+    final address = repo.lookupAadhaarAddress(_aadhaar.text);
+    final d = _draft;
+    d.state = address.state;
+    d.district = address.district;
+    d.pinCode = address.pin;
+    d.cityVillage = address.cityVillage;
+    _pin.text = address.pin;
+    _city.text = address.cityVillage;
+    setState(() => _prefilled = true);
+  }
+
+  bool _validate() {
     final d = _draft;
     _errors.clear();
-    switch (step) {
+    switch (_step) {
       case 0:
-        if (d.name.trim().length < 3) _errors['name'] = 'err_name';
-        if (d.voterId != null &&
-            d.voterId!.isNotEmpty &&
-            !_voterPattern.hasMatch(d.voterId!)) {
-          _errors['voter'] = 'err_voter';
-        }
+        if (_first.text.trim().isEmpty) _errors['first'] = 'err_required';
+        if (_last.text.trim().isEmpty) _errors['last'] = 'err_required';
+        if (!isValidAadhaar(_aadhaar.text)) _errors['aadhaar'] = 'err_aadhaar';
         if (d.professionalDomain.isEmpty) _errors['domain'] = 'err_select';
+        if (d.professionalDomain == otherOption &&
+            _domainOther.text.trim().length < 2) {
+          _errors['domainOther'] = 'err_required';
+        }
       case 1:
-        if (d.state.isEmpty) _errors['state'] = 'err_select';
-        if (d.parliamentary.isEmpty) _errors['pc'] = 'err_select';
-        if (d.assembly.isEmpty) _errors['ac'] = 'err_select';
-        if (!_pinPattern.hasMatch(d.pinCode)) _errors['pin'] = 'err_pin';
-        final referrer = d.referrerPhone ?? '';
-        if (referrer.isNotEmpty && !isValidMobile(referrer)) {
-          _errors['referrer'] = 'err_referrer';
+        if (!RegExp(r'^[1-9]\d{5}$').hasMatch(_pin.text)) {
+          _errors['pin'] = 'err_pin';
         }
+        if (d.state.isEmpty && _stateOther.text.trim().isEmpty) {
+          _errors['state'] = 'err_select';
+        }
+        if (d.state == 'OT' && _stateOther.text.trim().length < 2) {
+          _errors['state'] = 'err_required';
+        }
+        if (d.district.isEmpty && _districtOther.text.trim().isEmpty) {
+          _errors['district'] = 'err_select';
+        }
+        if (_city.text.trim().length < 2) _errors['city'] = 'err_required';
       case 2:
-        if (d.selfieIndex == null) _errors['selfie'] = 'err_selfie';
-      case 3:
-        if (d.type == MembershipType.patron && d.amount < _patronMinimum) {
-          _errors['amount'] = 'err_amount';
+        if (d.selfiePath == null) _errors['selfie'] = 'err_selfie';
+        final links = {
+          SocialPlatform.instagram: _instagram.text,
+          SocialPlatform.linkedin: _linkedin.text,
+          SocialPlatform.facebook: _facebook.text,
+        };
+        for (final entry in links.entries) {
+          final message = validateSocialLink(entry.key, entry.value);
+          if (entry.value.trim().isNotEmpty && message != null) {
+            _errors[entry.key.name] = 'err_social';
+          }
         }
+        if (_instagram.text.trim().isEmpty &&
+            _linkedin.text.trim().isEmpty &&
+            _facebook.text.trim().isEmpty) {
+          _errors['social'] = 'err_social_required';
+        }
+        if (!_consent) _errors['consent'] = 'err_consent';
     }
     return _errors.isEmpty;
   }
 
-  void _goToStep(int step) {
-    setState(() => _step = step);
-    _pages.animateToPage(
-      step,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOut,
-    );
-  }
-
-  void _back() {
-    if (_step == 0 || widget.editing) {
-      context.pop();
-    } else {
-      setState(() => _errors.clear());
-      _goToStep(_step - 1);
+  /// Copies the text fields into the draft. Full Aadhaar is never stored, only the masked form.
+  void _saveStep() {
+    final d = _draft;
+    switch (_step) {
+      case 0:
+        d.firstName = _first.text.trim();
+        d.lastName = _last.text.trim();
+        d.aadhaarMasked = maskAadhaar(_aadhaar.text);
+        d.professionalDomainOther = d.professionalDomain == otherOption
+            ? _domainOther.text.trim()
+            : null;
+      case 1:
+        d.pinCode = _pin.text;
+        d.stateOther = d.state == 'OT' ? _stateOther.text.trim() : null;
+        d.districtOther = d.district == otherOption
+            ? _districtOther.text.trim()
+            : null;
+        d.tehsil = _tehsil.text.trim().isEmpty ? null : _tehsil.text.trim();
+        d.block = _block.text.trim().isEmpty ? null : _block.text.trim();
+        d.cityVillage = _city.text.trim();
+        d.parliamentary = _pc.text.trim();
+        d.assembly = _ac.text.trim();
+      case 2:
+        d.instagramUrl = _instagram.text.trim().isEmpty
+            ? null
+            : _instagram.text.trim();
+        d.linkedinUrl = _linkedin.text.trim().isEmpty
+            ? null
+            : _linkedin.text.trim();
+        d.facebookUrl = _facebook.text.trim().isEmpty
+            ? null
+            : _facebook.text.trim();
     }
   }
 
-  void _next() {
-    if (!_validate(_step)) {
+  Future<void> _next() async {
+    if (!_validate()) {
       setState(() {});
       return;
     }
-    if (widget.editing) {
-      context.pop();
-    } else if (_step < 3) {
-      _goToStep(_step + 1);
-    } else {
-      context.push('/home/review');
+    _saveStep();
+    if (_step < 2) {
+      setState(() {
+        _step++;
+        _errors.clear();
+      });
+      return;
     }
+    setState(() => _submitting = true);
+    final repo = context.read<MockRepository>();
+    final app = await repo.submit(_draft);
+    if (!mounted) return;
+    setState(() => _submitting = false);
+    context.read<AppState>().resetDraft();
+    context.go('/home/submitted', extra: app.referenceNo);
   }
 
-  String? _err(BuildContext context, String key) {
-    final code = _errors[key];
-    return code == null ? null : t(context, code);
+  void _back() {
+    if (_step == 0) {
+      context.pop();
+    } else {
+      setState(() {
+        _step--;
+        _errors.clear();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final titles = [
-      t(context, 'step_personal'),
-      t(context, 'step_location'),
-      t(context, 'step_selfie'),
-      t(context, 'step_membership'),
+      t(context, 'reg_identity'),
+      t(context, 'reg_location'),
+      t(context, 'reg_selfie'),
     ];
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: _back),
-        actions: const [NavActions()],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: StepProgress(current: _step, title: titles[_step]),
-            ),
-            Expanded(
-              child: PageView(
-                controller: _pages,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _personalStep(context),
-                  _locationStep(context),
-                  _selfieStep(context),
-                  _membershipStep(context),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: PrimaryButton(label: t(context, 'next'), onPressed: _next),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _padded(List<Widget> children) => SingleChildScrollView(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: children,
-    ),
-  );
-
-  Widget _personalStep(BuildContext context) {
-    final d = _draft;
-    return _padded([
-      TextField(
-        controller: _name,
-        decoration: InputDecoration(
-          labelText: '${t(context, 'name')} *',
-          errorText: _err(context, 'name'),
-        ),
-        onChanged: (v) => d.name = v,
-      ),
-      const SizedBox(height: 12),
-      TextField(
-        enabled: false,
-        controller: TextEditingController(text: d.phone),
-        decoration: InputDecoration(labelText: t(context, 'phone')),
-      ),
-      const SizedBox(height: 16),
-      TextField(
-        controller: _voter,
-        textCapitalization: TextCapitalization.characters,
-        decoration: InputDecoration(
-          labelText: t(context, 'voter_id'),
-          errorText: _err(context, 'voter'),
-        ),
-        onChanged: (v) {
-          d.voterId = v.toUpperCase();
-          if (_voter.text != d.voterId) {
-            _voter.value = _voter.value.copyWith(text: d.voterId);
-          }
-        },
-      ),
-      const SizedBox(height: 16),
-      CupertinoSelect(
-        label: '${t(context, 'domain')} *',
-        value: d.professionalDomain,
-        items: professionalDomains,
-        display: (v) => optionLabel(context.read<AppState>().lang, v),
-        error: _err(context, 'domain'),
-        onChanged: (v) => setState(() => d.professionalDomain = v),
-      ),
-    ]);
-  }
-
-  Widget _locationStep(BuildContext context) {
-    final d = _draft;
-    final pcs = d.state.isEmpty
-        ? <String>[]
-        : (constituencies[d.state]?.keys.toList() ?? <String>[]);
-    final acs = d.parliamentary.isEmpty
-        ? <String>[]
-        : (constituencies[d.state]?[d.parliamentary] ?? <String>[]);
-    return _padded([
-      CupertinoSelect(
-        label: '${t(context, 'state')} *',
-        value: d.state.isEmpty ? '' : stateNames[d.state]!,
-        items: stateNames.values.toList(),
-        display: (v) => optionLabel(context.read<AppState>().lang, v),
-        error: _err(context, 'state'),
-        onChanged: (name) => setState(() {
-          d.state = stateNames.entries.firstWhere((e) => e.value == name).key;
-          d.parliamentary = '';
-          d.assembly = '';
-        }),
-      ),
-      const SizedBox(height: 16),
-      CupertinoSelect(
-        label: '${t(context, 'parliamentary')} *',
-        value: d.parliamentary,
-        items: pcs,
-        enabled: d.state.isNotEmpty,
-        error: _err(context, 'pc'),
-        onChanged: (v) => setState(() {
-          d.parliamentary = v;
-          d.assembly = '';
-        }),
-      ),
-      const SizedBox(height: 16),
-      CupertinoSelect(
-        label: '${t(context, 'assembly')} *',
-        value: d.assembly,
-        items: acs,
-        enabled: d.parliamentary.isNotEmpty,
-        error: _err(context, 'ac'),
-        onChanged: (v) => setState(() => d.assembly = v),
-      ),
-      const SizedBox(height: 16),
-      TextField(
-        controller: _pin,
-        keyboardType: TextInputType.number,
-        maxLength: 6,
-        decoration: InputDecoration(
-          labelText: '${t(context, 'pin_code')} *',
-          errorText: _err(context, 'pin'),
-        ),
-        onChanged: (v) => d.pinCode = v,
-      ),
-      const SizedBox(height: 16),
-      TextField(
-        controller: _referrer,
-        keyboardType: TextInputType.number,
-        maxLength: 10,
-        decoration: InputDecoration(
-          labelText: t(context, 'referrer'),
-          errorText: _err(context, 'referrer'),
-        ),
-        onChanged: (v) => d.referrerPhone = v.isEmpty ? null : v,
-      ),
-    ]);
-  }
-
-  Widget _selfieStep(BuildContext context) {
-    final d = _draft;
-    final chosen = d.selfieIndex;
-    return _padded([
-      const SizedBox(height: 16),
-      Center(
-        child: GestureDetector(
-          onTap: () => _pickSelfie(context),
-          child: Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.sheet,
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            alignment: Alignment.center,
-            child: chosen == null
-                ? const Icon(
-                    CupertinoIcons.camera,
-                    size: 48,
-                    color: AppColors.grey,
-                  )
-                : Avatar(
-                    index: chosen,
-                    initials: initialsOf(d.name),
-                    size: 160,
-                  ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _back();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(CupertinoIcons.chevron_back),
+            onPressed: _back,
           ),
+          actions: const [NavActions(showLanguage: false)],
         ),
-      ),
-      const SizedBox(height: 16),
-      Center(
-        child: TextButton(
-          onPressed: () => _pickSelfie(context),
-          child: Text(t(context, chosen == null ? 'take_selfie' : 'retake')),
-        ),
-      ),
-      if (_errors.containsKey('selfie'))
-        Center(
-          child: Text(
-            _err(context, 'selfie')!,
-            style: const TextStyle(color: AppColors.red),
-          ),
-        ),
-    ]);
-  }
-
-  Future<void> _pickSelfie(BuildContext context) async {
-    final title = tRead(context, 'take_selfie');
-    final cancel = tRead(context, 'cancel');
-    final initials = initialsOf(_draft.name);
-    await showCupertinoModalPopup<void>(
-      context: context,
-      builder: (sheetContext) => CupertinoActionSheet(
-        title: Text(title),
-        message: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: SafeArea(
+          child: Column(
             children: [
-              for (var i = 0; i < 3; i++)
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _draft.selfieIndex = i;
-                      _errors.remove('selfie');
-                    });
-                    Navigator.of(sheetContext).pop();
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: StepProgress(current: _step, title: titles[_step]),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  children: switch (_step) {
+                    0 => _identity(),
+                    1 => _location(),
+                    _ => _selfieAndSocial(),
                   },
-                  child: Avatar(index: i, initials: initials, size: 72),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: PrimaryButton(
+                  label: _step == 2
+                      ? t(context, 'submit_application')
+                      : t(context, 'continue'),
+                  loading: _submitting,
+                  onPressed: _next,
+                ),
+              ),
             ],
           ),
         ),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.of(sheetContext).pop(),
-          child: Text(cancel),
-        ),
       ),
     );
   }
 
-  Widget _membershipStep(BuildContext context) {
+  List<Widget> _identity() {
     final d = _draft;
-    final isPatron = d.type == MembershipType.patron;
-    return _padded([
-      _TypeCard(
-        selected: !isPatron,
-        title: t(context, 'ordinary'),
-        subtitle: t(context, 'ordinary_price'),
-        onTap: () => setState(() {
-          d.type = MembershipType.aicpMember;
-          d.amount = 1000;
-          _amount.clear();
-        }),
+    final phone = context.read<AppState>().phone ?? '';
+    return [
+      _field(t(context, 'first_name'), _first, errorKey: 'first'),
+      _field(t(context, 'last_name'), _last, errorKey: 'last'),
+      _readOnly(t(context, 'phone'), phone),
+      _field(
+        t(context, 'aadhaar'),
+        _aadhaar,
+        keyboard: TextInputType.number,
+        hint: t(context, 'aadhaar_hint'),
+        errorKey: 'aadhaar',
+        formatter: true,
+        onEditingComplete: _prefillFromAadhaar,
       ),
-      const SizedBox(height: 12),
-      _TypeCard(
-        selected: isPatron,
-        title: t(context, 'patron'),
-        subtitle: t(context, 'patron_from'),
-        onTap: () => setState(() {
-          d.type = MembershipType.patron;
-          if (d.amount < _patronMinimum) d.amount = _patronMinimum;
-          _amount.text = '${d.amount}';
-        }),
+      const SizedBox(height: 8),
+      Text(t(context, 'professional_domain'), style: AppText.sectionTitle),
+      const SizedBox(height: 8),
+      _DomainTile(
+        label: d.professionalDomain.isEmpty
+            ? t(context, 'choose_domain')
+            : d.professionalDomain,
+        error: _err('domain'),
+        onTap: _pickDomain,
       ),
-      if (isPatron) ...[
-        const SizedBox(height: 16),
-        TextField(
-          controller: _amount,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: '${t(context, 'amount')} *',
-            errorText: _err(context, 'amount'),
+      if (d.professionalDomain == otherOption)
+        _field(
+          t(context, 'domain_other'),
+          _domainOther,
+          errorKey: 'domainOther',
+        ),
+    ];
+  }
+
+  Future<void> _pickDomain() async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _DomainSheet(current: _draft.professionalDomain),
+    );
+    if (picked == null) return;
+    setState(() {
+      _draft.professionalDomain = picked;
+      if (picked != otherOption) _domainOther.clear();
+    });
+  }
+
+  List<Widget> _location() {
+    final d = _draft;
+    final region = regionByCode(d.state);
+    final stateNames = [for (final r in regions) r.name, t(context, 'other')];
+    final currentStateName = d.state == 'OT'
+        ? t(context, 'other')
+        : (region?.name ?? '');
+    final districts = [...?region?.districts, t(context, 'other')];
+    return [
+      if (_prefilled)
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEAF4EA),
+            borderRadius: BorderRadius.circular(12),
           ),
-          onChanged: (v) => d.amount = int.tryParse(v) ?? 0,
+          child: Text(t(context, 'prefilled_demo')),
         ),
-        const SizedBox(height: 8),
-        Text(
-          t(context, 'duration_tbc'),
-          style: const TextStyle(color: AppColors.grey),
+      _field(
+        t(context, 'pin_code'),
+        _pin,
+        keyboard: TextInputType.number,
+        errorKey: 'pin',
+        maxLength: 6,
+        onChanged: _onPinChanged,
+        helper:
+            _pinIndex != null && _pin.text.length == 6 && _pinOffices.isEmpty
+            ? t(context, 'pin_not_found')
+            : null,
+      ),
+      if (_pinOffices.length > 1)
+        CupertinoSelect(
+          label: t(context, 'pin_pick_office'),
+          value: _city.text,
+          items: [for (final o in _pinOffices) o.office],
+          onChanged: (v) => setState(() {
+            final r = _pinOffices.firstWhere((o) => o.office == v);
+            _applyOffice(r);
+          }),
         ),
-      ],
-    ]);
+      CupertinoSelect(
+        label: t(context, 'state_ut'),
+        value: currentStateName,
+        items: stateNames,
+        error: _err('state'),
+        onChanged: (v) => setState(() {
+          if (v == t(context, 'other')) {
+            d.state = 'OT';
+          } else {
+            d.state = regions.firstWhere((r) => r.name == v).code;
+          }
+          d.district = '';
+          d.districtOther = null;
+          _districtOther.clear();
+          d.stateOther = d.state == 'OT' ? _stateOther.text : null;
+        }),
+      ),
+      if (d.state == 'OT')
+        _field(t(context, 'state_other'), _stateOther, errorKey: 'state'),
+      if (d.state.isNotEmpty && d.state != 'OT')
+        CupertinoSelect(
+          label: t(context, 'district'),
+          value: d.district,
+          items: districts,
+          error: _err('district'),
+          onChanged: (v) => setState(() {
+            if (v == t(context, 'other')) {
+              d.district = otherOption;
+            } else {
+              d.district = v;
+              d.districtOther = null;
+              _districtOther.clear();
+            }
+          }),
+        ),
+      if (d.district == otherOption)
+        _field(
+          t(context, 'district_other'),
+          _districtOther,
+          errorKey: 'district',
+        ),
+      _field(t(context, 'tehsil'), _tehsil, optional: true),
+      _field(t(context, 'block'), _block, optional: true),
+      _field(t(context, 'city_village'), _city, errorKey: 'city'),
+      _field(t(context, 'parliamentary'), _pc, optional: true),
+      _field(t(context, 'assembly'), _ac, optional: true),
+    ];
+  }
+
+  List<Widget> _selfieAndSocial() {
+    final d = _draft;
+    return [
+      Text(t(context, 'selfie_title'), style: AppText.sectionTitle),
+      const SizedBox(height: 8),
+      SelfieCapture(
+        value: d.selfiePath,
+        onChanged: (v) => setState(() {
+          d.selfiePath = v;
+          if (v == null) _errors.remove('selfie');
+        }),
+      ),
+      if (_err('selfie') != null) ErrorText(_err('selfie')!),
+      const SizedBox(height: 20),
+      Text(t(context, 'social_title'), style: AppText.sectionTitle),
+      const SizedBox(height: 4),
+      Text(
+        t(context, 'social_hint'),
+        style: const TextStyle(color: AppColors.grey),
+      ),
+      const SizedBox(height: 8),
+      _field(
+        'Instagram',
+        _instagram,
+        keyboard: TextInputType.url,
+        errorKey: 'instagram',
+      ),
+      _field(
+        'LinkedIn',
+        _linkedin,
+        keyboard: TextInputType.url,
+        errorKey: 'linkedin',
+      ),
+      _field(
+        'Facebook',
+        _facebook,
+        keyboard: TextInputType.url,
+        errorKey: 'facebook',
+      ),
+      if (_err('social') != null) ErrorText(_err('social')!),
+      if (_err('instagram') != null ||
+          _err('linkedin') != null ||
+          _err('facebook') != null)
+        ErrorText(t(context, 'err_social')),
+      const SizedBox(height: 12),
+      Row(
+        children: [
+          CupertinoSwitch(
+            value: _consent,
+            onChanged: (v) => setState(() => _consent = v),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(t(context, 'consent_text'))),
+        ],
+      ),
+      if (_err('consent') != null) ErrorText(_err('consent')!),
+    ];
+  }
+
+  Widget _readOnly(String label, String value) => Padding(
+    padding: const EdgeInsets.only(bottom: 14),
+    child: InputDecorator(
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      child: Text(value),
+    ),
+  );
+
+  Widget _field(
+    String label,
+    TextEditingController controller, {
+    String? errorKey,
+    String? hint,
+    String? helper,
+    bool optional = false,
+    TextInputType? keyboard,
+    int? maxLength,
+    bool formatter = false,
+    ValueChanged<String>? onChanged,
+    VoidCallback? onEditingComplete,
+  }) {
+    final error = errorKey == null ? null : _err(errorKey);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboard,
+        maxLength: maxLength,
+        onChanged:
+            onChanged ??
+            (_) {
+              if (errorKey != null) setState(() => _errors.remove(errorKey));
+            },
+        onEditingComplete: onEditingComplete,
+        inputFormatters: formatter ? [_AadhaarFormatter()] : null,
+        decoration: InputDecoration(
+          labelText: optional ? '$label (${t(context, 'optional')})' : label,
+          hintText: hint,
+          helperText: helper,
+          errorText: error,
+          counterText: '',
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
   }
 }
 
-class _TypeCard extends StatelessWidget {
-  const _TypeCard({
-    required this.selected,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
+/// Shows the Aadhaar number in groups of four digits while typing.
+class _AadhaarFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    final limited = digits.length > 12 ? digits.substring(0, 12) : digits;
+    final buffer = StringBuffer();
+    for (var i = 0; i < limited.length; i++) {
+      if (i > 0 && i % 4 == 0) buffer.write(' ');
+      buffer.write(limited[i]);
+    }
+    final text = buffer.toString();
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+}
 
-  final bool selected;
-  final String title;
-  final String subtitle;
+class _DomainTile extends StatelessWidget {
+  const _DomainTile({required this.label, required this.onTap, this.error});
+
+  final String label;
   final VoidCallback onTap;
+  final String? error;
 
   @override
   Widget build(BuildContext context) {
@@ -446,37 +613,114 @@ class _TypeCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
+          color: const Color(0xFFF2F7FD),
           border: Border.all(
-            color: selected ? AppColors.navy : Colors.grey.shade300,
-            width: 2,
+            color: error == null ? const Color(0xFFCFE0F5) : AppColors.red,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: AppColors.grey)),
-                ],
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.navy,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            if (selected)
-              const Icon(Icons.check_circle, color: AppColors.green),
+            const Icon(
+              CupertinoIcons.chevron_down,
+              color: AppColors.navy,
+              size: 18,
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+/// Grid of the 24 domains plus Other, styled like the client's domain cards.
+class _DomainSheet extends StatelessWidget {
+  const _DomainSheet({required this.current});
+
+  final String current;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = [...professionalDomains, otherOption];
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.8,
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Text(
+              t(context, 'professional_domain'),
+              style: AppText.sectionTitle,
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: GridView.count(
+                padding: const EdgeInsets.all(12),
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 1.25,
+                children: [
+                  for (final item in items)
+                    InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: () => Navigator.of(context).pop(item),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2F7FD),
+                          border: Border.all(
+                            color: item == current
+                                ? AppColors.navy
+                                : const Color(0xFFCFE0F5),
+                            width: item == current ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          item,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.navy,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ErrorText extends StatelessWidget {
+  const ErrorText(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 4, bottom: 8),
+    child: Text(
+      text,
+      style: const TextStyle(color: AppColors.red, fontSize: 13),
+    ),
+  );
 }

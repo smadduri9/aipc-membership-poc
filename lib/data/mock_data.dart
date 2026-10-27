@@ -310,6 +310,51 @@ List<_SeedRow> _generatedRows() {
   return rows;
 }
 
+/// Demo Aadhaar addresses, picked by the last digit of the number. Stands in for the e-KYC address.
+const List<({String state, String district, String pin, String cityVillage})>
+demoAadhaarAddresses = [
+  (
+    state: 'PB',
+    district: 'Ludhiana',
+    pin: '141001',
+    cityVillage: 'Ludhiana Civil Lines',
+  ),
+  (
+    state: 'DL',
+    district: 'New Delhi',
+    pin: '110001',
+    cityVillage: 'Connaught Place',
+  ),
+  (state: 'MH', district: 'Pune', pin: '411001', cityVillage: 'Pune Camp'),
+  (
+    state: 'KA',
+    district: 'Bengaluru Urban',
+    pin: '560001',
+    cityVillage: 'MG Road',
+  ),
+  (state: 'WB', district: 'Kolkata', pin: '700001', cityVillage: 'BBD Bagh'),
+  (
+    state: 'TN',
+    district: 'Chennai',
+    pin: '600001',
+    cityVillage: 'Parry Corner',
+  ),
+  (state: 'UP', district: 'Lucknow', pin: '226001', cityVillage: 'Hazratganj'),
+  (state: 'RJ', district: 'Jaipur', pin: '302001', cityVillage: 'Johari Bazar'),
+  (
+    state: 'OD',
+    district: 'Khordha',
+    pin: '751001',
+    cityVillage: 'Saheed Nagar',
+  ),
+  (
+    state: 'KL',
+    district: 'Ernakulam',
+    pin: '682001',
+    cityVillage: 'Marine Drive',
+  ),
+];
+
 /// Demo admin accounts: one master, and one state representative per state or UT.
 /// Every password is demo1234.
 final List<AdminUser> adminUsers = [

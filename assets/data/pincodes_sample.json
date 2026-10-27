@@ -1,0 +1,1710 @@
+[
+ {
+  "pin": "744101",
+  "office": "Port Blair H.O",
+  "block": "A - N Islands Division",
+  "district": "South Andamans",
+  "state": "AN"
+ },
+ {
+  "pin": "744201",
+  "office": "Nimbudera B.O",
+  "block": "A - N Islands Division",
+  "district": "North And Middle Andaman",
+  "state": "AN"
+ },
+ {
+  "pin": "744302",
+  "office": "Kondul Island B.O",
+  "block": "A - N Islands Division",
+  "district": "Nicobars",
+  "state": "AN"
+ },
+ {
+  "pin": "535002",
+  "office": "Vizianagaram H.O",
+  "block": "Vizianagaram Division",
+  "district": "Vizianagaram",
+  "state": "AP"
+ },
+ {
+  "pin": "517325",
+  "office": "Madanapalle H.O",
+  "block": "Chittoor Division",
+  "district": "Chittoor",
+  "state": "AP"
+ },
+ {
+  "pin": "533201",
+  "office": "Amalapuram H.O",
+  "block": "Amalapuram Division",
+  "district": "East Godavari",
+  "state": "AP"
+ },
+ {
+  "pin": "518501",
+  "office": "Nandyal H.O",
+  "block": "Nandyal Division",
+  "district": "Kurnool",
+  "state": "AP"
+ },
+ {
+  "pin": "516360",
+  "office": "Proddatur H.O",
+  "block": "Proddatur Division",
+  "district": "Y.S.R.",
+  "state": "AP"
+ },
+ {
+  "pin": "530001",
+  "office": "Visakhapatnam H.O",
+  "block": "Visakhapatnam Division",
+  "district": "Visakhapatanam",
+  "state": "AP"
+ },
+ {
+  "pin": "515801",
+  "office": "Guntakal H.O",
+  "block": "Anantapur Division",
+  "district": "Anantapur",
+  "state": "AP"
+ },
+ {
+  "pin": "532001",
+  "office": "Srikakulam H.O",
+  "block": "Srikakulam Division",
+  "district": "Srikakulam",
+  "state": "AP"
+ },
+ {
+  "pin": "791111",
+  "office": "Itanagar H.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Papum Pare",
+  "state": "AR"
+ },
+ {
+  "pin": "791001",
+  "office": "Bagra B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "West Siang",
+  "state": "AR"
+ },
+ {
+  "pin": "791120",
+  "office": "Hari B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Lower Subansiri",
+  "state": "AR"
+ },
+ {
+  "pin": "792122",
+  "office": "Milonpur B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Changlang",
+  "state": "AR"
+ },
+ {
+  "pin": "791001",
+  "office": "Kaying B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Siang",
+  "state": "AR"
+ },
+ {
+  "pin": "791001",
+  "office": "Monigong B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Shi Yomi",
+  "state": "AR"
+ },
+ {
+  "pin": "790106",
+  "office": "Zemithang B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Tawang",
+  "state": "AR"
+ },
+ {
+  "pin": "792001",
+  "office": "Changliang B.O",
+  "block": "Arunachal Pradesh Division",
+  "district": "Lohit",
+  "state": "AR"
+ },
+ {
+  "pin": "781301",
+  "office": "Barpeta H.O",
+  "block": "Nalbari Division",
+  "district": "Barpeta",
+  "state": "AS"
+ },
+ {
+  "pin": "781335",
+  "office": "Nalbari H.O",
+  "block": "Nalbari Division",
+  "district": "Nalbari",
+  "state": "AS"
+ },
+ {
+  "pin": "784001",
+  "office": "Tezpur H.O",
+  "block": "Darrang Division",
+  "district": "Sonitpur",
+  "state": "AS"
+ },
+ {
+  "pin": "781014",
+  "office": "Guwahati University H.O",
+  "block": "Guwahati Division",
+  "district": "Kamrup Metro",
+  "state": "AS"
+ },
+ {
+  "pin": "783301",
+  "office": "Dhubri H.O",
+  "block": "Goalpara Division",
+  "district": "Dhubri",
+  "state": "AS"
+ },
+ {
+  "pin": "783370",
+  "office": "Kokrajhar H.O",
+  "block": "Goalpara Division",
+  "district": "Kokrajhar",
+  "state": "AS"
+ },
+ {
+  "pin": "788710",
+  "office": "Karimganj H.O",
+  "block": "Cachar Division",
+  "district": "Karimganj",
+  "state": "AS"
+ },
+ {
+  "pin": "785640",
+  "office": "Sivasagar H.O",
+  "block": "Sibsagar Division",
+  "district": "Sivasagar",
+  "state": "AS"
+ },
+ {
+  "pin": "800004",
+  "office": "Bankipore HO",
+  "block": "Patna Division",
+  "district": "Patna",
+  "state": "BR"
+ },
+ {
+  "pin": "811201",
+  "office": "Munger HO",
+  "block": "Munger Division",
+  "district": "Munger",
+  "state": "BR"
+ },
+ {
+  "pin": "844101",
+  "office": "Hajipur HO",
+  "block": "Vaishali Division",
+  "district": "Vaishali",
+  "state": "BR"
+ },
+ {
+  "pin": "821115",
+  "office": "Sasaram HO",
+  "block": "Rohtas Division",
+  "district": "Rohtas",
+  "state": "BR"
+ },
+ {
+  "pin": "823001",
+  "office": "Gaya HO",
+  "block": "Gaya Division",
+  "district": "Gaya",
+  "state": "BR"
+ },
+ {
+  "pin": "805110",
+  "office": "Nawadha HO",
+  "block": "Nawadha Division",
+  "district": "Nawada",
+  "state": "BR"
+ },
+ {
+  "pin": "804408",
+  "office": "Jehanabad HO",
+  "block": "Gaya Division",
+  "district": "Jehanabad",
+  "state": "BR"
+ },
+ {
+  "pin": "851101",
+  "office": "Begusarai HO",
+  "block": "Begusarai Division",
+  "district": "Begusarai",
+  "state": "BR"
+ },
+ {
+  "pin": "495677",
+  "office": "Korba HO",
+  "block": "Bilaspur Division",
+  "district": "Korba",
+  "state": "CG"
+ },
+ {
+  "pin": "495001",
+  "office": "Bilaspur BilaspurCGH HO",
+  "block": "Bilaspur Division",
+  "district": "Bilaspur",
+  "state": "CG"
+ },
+ {
+  "pin": "492001",
+  "office": "Raipur HO",
+  "block": "Raipur Division",
+  "district": "Raipur",
+  "state": "CG"
+ },
+ {
+  "pin": "491001",
+  "office": "Durg HO",
+  "block": "Durg Division",
+  "district": "Durg",
+  "state": "CG"
+ },
+ {
+  "pin": "495668",
+  "office": "Janjgir HO",
+  "block": "Bilaspur Division",
+  "district": "Janjgir-Champa",
+  "state": "CG"
+ },
+ {
+  "pin": "497001",
+  "office": "Ambikapur HO",
+  "block": "Raigarh Division",
+  "district": "Surguja",
+  "state": "CG"
+ },
+ {
+  "pin": "491441",
+  "office": "Rajnandgaon HO",
+  "block": "Durg Division",
+  "district": "Rajnandgaon",
+  "state": "CG"
+ },
+ {
+  "pin": "496001",
+  "office": "Raigarh HO",
+  "block": "Raigarh Division",
+  "district": "Raigarh",
+  "state": "CG"
+ },
+ {
+  "pin": "160017",
+  "office": "Chandigarh GPO",
+  "block": "Chandigarh Division",
+  "district": "Chandigarh",
+  "state": "CH"
+ },
+ {
+  "pin": "362570",
+  "office": "Bucharvada BO",
+  "block": "Junagadh Division",
+  "district": "Diu",
+  "state": "DH"
+ },
+ {
+  "pin": "396230",
+  "office": "Masat BO",
+  "block": "Valsad Division",
+  "district": "Dadra And Nagar Haveli",
+  "state": "DH"
+ },
+ {
+  "pin": "396220",
+  "office": "Magarwada BO",
+  "block": "Valsad Division",
+  "district": "Daman",
+  "state": "DH"
+ },
+ {
+  "pin": "110052",
+  "office": "Ashok Vihar HO",
+  "block": "Delhi North Division",
+  "district": "North",
+  "state": "DL"
+ },
+ {
+  "pin": "110095",
+  "office": "Jhilmil HO",
+  "block": "Delhi East Division",
+  "district": "Shahdara",
+  "state": "DL"
+ },
+ {
+  "pin": "110001",
+  "office": "Sansad Marg HO",
+  "block": "New Delhi Central Division",
+  "district": "New Delhi",
+  "state": "DL"
+ },
+ {
+  "pin": "110003",
+  "office": "Lodi Road HO",
+  "block": "New Delhi South Division",
+  "district": "South",
+  "state": "DL"
+ },
+ {
+  "pin": "110019",
+  "office": "Kalkaji HO",
+  "block": "New Delhi South Division",
+  "district": "South East",
+  "state": "DL"
+ },
+ {
+  "pin": "110015",
+  "office": "Ramesh Nagar H.O",
+  "block": "New Delhi West Division",
+  "district": "West",
+  "state": "DL"
+ },
+ {
+  "pin": "110002",
+  "office": "Indraprastha HO",
+  "block": "New Delhi Central Division",
+  "district": "Central",
+  "state": "DL"
+ },
+ {
+  "pin": "110073",
+  "office": "Mundela Kalan B.O",
+  "block": "New Delhi West Division",
+  "district": "South West",
+  "state": "DL"
+ },
+ {
+  "pin": "403001",
+  "office": "Panaji H.O",
+  "block": "Goa Division",
+  "district": "North Goa",
+  "state": "GA"
+ },
+ {
+  "pin": "403601",
+  "office": "Margao H.O",
+  "block": "Goa Division",
+  "district": "South Goa",
+  "state": "GA"
+ },
+ {
+  "pin": "392001",
+  "office": "Bharuch HO",
+  "block": "Bharuch Division",
+  "district": "Bharuch",
+  "state": "GJ"
+ },
+ {
+  "pin": "395001",
+  "office": "Nanpura HO",
+  "block": "Surat Division",
+  "district": "Surat",
+  "state": "GJ"
+ },
+ {
+  "pin": "382010",
+  "office": "Gandhinagar Gujarat HO",
+  "block": "Gandhinagar Division",
+  "district": "Gandhinagar",
+  "state": "GJ"
+ },
+ {
+  "pin": "362001",
+  "office": "Junagadh HO",
+  "block": "Junagadh Division",
+  "district": "Junagadh",
+  "state": "GJ"
+ },
+ {
+  "pin": "363001",
+  "office": "Surendranagar HO",
+  "block": "Surendranagar Division",
+  "district": "Surendranagar",
+  "state": "GJ"
+ },
+ {
+  "pin": "361001",
+  "office": "Jamnagar HO",
+  "block": "Jamnagar Division",
+  "district": "Jamnagar",
+  "state": "GJ"
+ },
+ {
+  "pin": "360575",
+  "office": "Porbandar HO",
+  "block": "Porbandar Division",
+  "district": "Porbandar",
+  "state": "GJ"
+ },
+ {
+  "pin": "380002",
+  "office": "Revdibazar HO",
+  "block": "Ahmedabad City Division",
+  "district": "Ahmadabad",
+  "state": "GJ"
+ },
+ {
+  "pin": "175132",
+  "office": "Keylong HO",
+  "block": "Mandi Division",
+  "district": "Lahul And Spiti",
+  "state": "HP"
+ },
+ {
+  "pin": "175001",
+  "office": "Mandi HO",
+  "block": "Mandi Division",
+  "district": "Mandi",
+  "state": "HP"
+ },
+ {
+  "pin": "176061",
+  "office": "Palampur HO",
+  "block": "Dharamsala Division",
+  "district": "Kangra",
+  "state": "HP"
+ },
+ {
+  "pin": "172001",
+  "office": "Rampur Bushahr HO",
+  "block": "Rampur Bushahr Division",
+  "district": "Shimla",
+  "state": "HP"
+ },
+ {
+  "pin": "172107",
+  "office": "Reckong Peo HO",
+  "block": "Rampur Bushahr Division",
+  "district": "Kinnaur",
+  "state": "HP"
+ },
+ {
+  "pin": "174305",
+  "office": "Barsar HO",
+  "block": "Hamirpur Division",
+  "district": "Hamirpur",
+  "state": "HP"
+ },
+ {
+  "pin": "174303",
+  "office": "Una HO",
+  "block": "Una Division",
+  "district": "Una",
+  "state": "HP"
+ },
+ {
+  "pin": "176310",
+  "office": "Chamba HO",
+  "block": "Chamba Division",
+  "district": "Chamba",
+  "state": "HP"
+ },
+ {
+  "pin": "133001",
+  "office": "Ambala G.P.O.",
+  "block": "Ambala Division",
+  "district": "Ambala",
+  "state": "HR"
+ },
+ {
+  "pin": "132103",
+  "office": "Panipat H.O",
+  "block": "Karnal Division",
+  "district": "Panipat",
+  "state": "HR"
+ },
+ {
+  "pin": "122001",
+  "office": "Gurgaon HO",
+  "block": "Gurgaon Division",
+  "district": "Gurugram",
+  "state": "HR"
+ },
+ {
+  "pin": "126102",
+  "office": "Jind H.O",
+  "block": "Karnal Division",
+  "district": "Jind",
+  "state": "HR"
+ },
+ {
+  "pin": "125001",
+  "office": "Hisar HO",
+  "block": "Hissar Division",
+  "district": "Hisar",
+  "state": "HR"
+ },
+ {
+  "pin": "135001",
+  "office": "Yamunanagar H.O",
+  "block": "Ambala Division",
+  "district": "Yamunanagar",
+  "state": "HR"
+ },
+ {
+  "pin": "127021",
+  "office": "Bhiwani HO",
+  "block": "Bhiwani Division",
+  "district": "Bhiwani",
+  "state": "HR"
+ },
+ {
+  "pin": "125055",
+  "office": "Sirsa HO",
+  "block": "Hissar Division",
+  "district": "Sirsa",
+  "state": "HR"
+ },
+ {
+  "pin": "831001",
+  "office": "Jamshedpur HO",
+  "block": "Singhbhum Division",
+  "district": "East Singhbum",
+  "state": "JH"
+ },
+ {
+  "pin": "825301",
+  "office": "Hazaribagh HO",
+  "block": "Hazaribagh Division",
+  "district": "Hazaribagh",
+  "state": "JH"
+ },
+ {
+  "pin": "815301",
+  "office": "Giridih HO",
+  "block": "Giridih Division",
+  "district": "Giridih",
+  "state": "JH"
+ },
+ {
+  "pin": "833201",
+  "office": "Chaibasa HO",
+  "block": "Singhbhum Division",
+  "district": "West Singhbhum",
+  "state": "JH"
+ },
+ {
+  "pin": "835207",
+  "office": "Gumla HO",
+  "block": "Ranchi Division",
+  "district": "Gumla",
+  "state": "JH"
+ },
+ {
+  "pin": "814101",
+  "office": "Dumka HO",
+  "block": "Santhal Parganas Division",
+  "district": "Dumka",
+  "state": "JH"
+ },
+ {
+  "pin": "814112",
+  "office": "BDeoghar HO",
+  "block": "Santhal Parganas Division",
+  "district": "Deoghar",
+  "state": "JH"
+ },
+ {
+  "pin": "834001",
+  "office": "Ranchi GPO",
+  "block": "Ranchi Division",
+  "district": "Ranchi",
+  "state": "JH"
+ },
+ {
+  "pin": "185131",
+  "office": "Rajouri HO",
+  "block": "Rajouri Division",
+  "district": "Rajouri",
+  "state": "JK"
+ },
+ {
+  "pin": "182101",
+  "office": "Udhampur HO",
+  "block": "Udhampur Division",
+  "district": "Udhampur",
+  "state": "JK"
+ },
+ {
+  "pin": "192101",
+  "office": "Anantnag HO",
+  "block": "Srinagar Division",
+  "district": "Anantnag",
+  "state": "JK"
+ },
+ {
+  "pin": "180001",
+  "office": "Jammu HO",
+  "block": "Jammu Division",
+  "district": "Jammu",
+  "state": "JK"
+ },
+ {
+  "pin": "184101",
+  "office": "Kathua HO",
+  "block": "Jammu Division",
+  "district": "Kathua",
+  "state": "JK"
+ },
+ {
+  "pin": "190001",
+  "office": "Srinagar GPO",
+  "block": "Srinagar Division",
+  "district": "Srinagar",
+  "state": "JK"
+ },
+ {
+  "pin": "193101",
+  "office": "Baramulla H.O",
+  "block": "Baramulla Division",
+  "district": "Baramulla",
+  "state": "JK"
+ },
+ {
+  "pin": "185121",
+  "office": "Hari Marhote BO",
+  "block": "Rajouri Division",
+  "district": "Poonch",
+  "state": "JK"
+ },
+ {
+  "pin": "560001",
+  "office": "Bengaluru G.P.O.",
+  "block": "BANGALORE GPO DIVISION",
+  "district": "Bengaluru Urban",
+  "state": "KA"
+ },
+ {
+  "pin": "582101",
+  "office": "Gadag H.O",
+  "block": "Gadag Division",
+  "district": "Gadag",
+  "state": "KA"
+ },
+ {
+  "pin": "574104",
+  "office": "Karkala H.O",
+  "block": "Puttur Division",
+  "district": "Udupi",
+  "state": "KA"
+ },
+ {
+  "pin": "581401",
+  "office": "Sirsi H.O",
+  "block": "Sirsi Division",
+  "district": "Uttara Kannada",
+  "state": "KA"
+ },
+ {
+  "pin": "577126",
+  "office": "Koppa H.O",
+  "block": "Chikkamagaluru Division",
+  "district": "Chikkamagaluru",
+  "state": "KA"
+ },
+ {
+  "pin": "574201",
+  "office": "Puttur(D.K.) H.O",
+  "block": "Puttur Division",
+  "district": "Dakshina Kannada",
+  "state": "KA"
+ },
+ {
+  "pin": "572201",
+  "office": "Tiptur H.O",
+  "block": "Tumakuru Division",
+  "district": "Tumakuru",
+  "state": "KA"
+ },
+ {
+  "pin": "562101",
+  "office": "Chickballapur H.O",
+  "block": "Kolar Division",
+  "district": "Chikkaballapura",
+  "state": "KA"
+ },
+ {
+  "pin": "682011",
+  "office": "Ernakulam HO",
+  "block": "Ernakulam Division",
+  "district": "Ernakulam",
+  "state": "KL"
+ },
+ {
+  "pin": "670101",
+  "office": "Thalassery HO",
+  "block": "Thalassery Division",
+  "district": "Kannur",
+  "state": "KL"
+ },
+ {
+  "pin": "673001",
+  "office": "Calicut HO",
+  "block": "Calicut Division",
+  "district": "Kozhikode",
+  "state": "KL"
+ },
+ {
+  "pin": "676505",
+  "office": "Malappuram HO",
+  "block": "Manjeri Division",
+  "district": "Malappuram",
+  "state": "KL"
+ },
+ {
+  "pin": "685584",
+  "office": "Thodupuzha HO",
+  "block": "Idukki Division",
+  "district": "Idukki",
+  "state": "KL"
+ },
+ {
+  "pin": "691523",
+  "office": "Adur Kla HO",
+  "block": "Pathanamthitta Division",
+  "district": "Pathanamthitta",
+  "state": "KL"
+ },
+ {
+  "pin": "691305",
+  "office": "Punalur HO",
+  "block": "Pathanamthitta Division",
+  "district": "Kollam",
+  "state": "KL"
+ },
+ {
+  "pin": "671121",
+  "office": "Kasaragod HO",
+  "block": "Kasaragod Division",
+  "district": "Kasaragod",
+  "state": "KL"
+ },
+ {
+  "pin": "194101",
+  "office": "Leh H.O",
+  "block": "Leh Division",
+  "district": "Leh Ladakh",
+  "state": "LA"
+ },
+ {
+  "pin": "194103",
+  "office": "SALISKOT B.O",
+  "block": "Leh Division",
+  "district": "Kargil",
+  "state": "LA"
+ },
+ {
+  "pin": "682555",
+  "office": "Kavaratti H.O",
+  "block": "Lakshadweep Division",
+  "district": "Lakshadweep District",
+  "state": "LD"
+ },
+ {
+  "pin": "431601",
+  "office": "Nanded H.O",
+  "block": "Nanded Division",
+  "district": "Nanded",
+  "state": "MH"
+ },
+ {
+  "pin": "415612",
+  "office": "Ratnagiri H.O",
+  "block": "RATNAGIRI DIVISION",
+  "district": "Ratnagiri",
+  "state": "MH"
+ },
+ {
+  "pin": "410206",
+  "office": "Panvel H.O",
+  "block": "Navi Mumbai Division",
+  "district": "Raigad",
+  "state": "MH"
+ },
+ {
+  "pin": "400014",
+  "office": "Dadar H.O",
+  "block": "Mumbai City East Division",
+  "district": "Mumbai",
+  "state": "MH"
+ },
+ {
+  "pin": "416003",
+  "office": "Kolhapur H.O",
+  "block": "Kolhapur Division",
+  "district": "Kolhapur",
+  "state": "MH"
+ },
+ {
+  "pin": "423203",
+  "office": "Malegaon H.O",
+  "block": "Malegaon Division",
+  "district": "Nashik",
+  "state": "MH"
+ },
+ {
+  "pin": "400601",
+  "office": "Thane H.O",
+  "block": "Thane Division",
+  "district": "Thane",
+  "state": "MH"
+ },
+ {
+  "pin": "424001",
+  "office": "Dhule H.O",
+  "block": "Dhule Division",
+  "district": "Dhule",
+  "state": "MH"
+ },
+ {
+  "pin": "794001",
+  "office": "Tura H.O",
+  "block": "Meghalaya Division",
+  "district": "West Garo Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "793001",
+  "office": "Shillong G.P.O.",
+  "block": "Meghalaya Division",
+  "district": "East Khasi Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "781029",
+  "office": "Pillangkata B.O",
+  "block": "Guwahati Division",
+  "district": "Ri Bhoi",
+  "state": "ML"
+ },
+ {
+  "pin": "793109",
+  "office": "Passadwar B.O",
+  "block": "Meghalaya Division",
+  "district": "West Jaintia Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "793200",
+  "office": "Huroi B.O",
+  "block": "Meghalaya Division",
+  "district": "East Jaintia Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "793114",
+  "office": "Jakrem B.O",
+  "block": "Meghalaya Division",
+  "district": "South West Khasi Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "793120",
+  "office": "Dungki   Ingdong B.O",
+  "block": "Meghalaya Division",
+  "district": "West Khasi Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "794115",
+  "office": "Betsing B.O",
+  "block": "Meghalaya Division",
+  "district": "South West Garo Hills",
+  "state": "ML"
+ },
+ {
+  "pin": "795001",
+  "office": "Imphal H.O",
+  "block": "Manipur Division",
+  "district": "Imphal West",
+  "state": "MN"
+ },
+ {
+  "pin": "795114",
+  "office": "Haraorou B.O",
+  "block": "Manipur Division",
+  "district": "Imphal East",
+  "state": "MN"
+ },
+ {
+  "pin": "795104",
+  "office": "Kaibi B.O",
+  "block": "Manipur Division",
+  "district": "Senapati",
+  "state": "MN"
+ },
+ {
+  "pin": "795125",
+  "office": "Illong B.O",
+  "block": "Manipur Division",
+  "district": "Tamenglong",
+  "state": "MN"
+ },
+ {
+  "pin": "795116",
+  "office": "Chongmun B.O",
+  "block": "Manipur Division",
+  "district": "Jiribam",
+  "state": "MN"
+ },
+ {
+  "pin": "795117",
+  "office": "Mual Vaiphei B.O",
+  "block": "Manipur Division",
+  "district": "Churachandpur",
+  "state": "MN"
+ },
+ {
+  "pin": "795101",
+  "office": "Serou B.O",
+  "block": "Manipur Division",
+  "district": "Kakching",
+  "state": "MN"
+ },
+ {
+  "pin": "795135",
+  "office": "Khangbarol B.O",
+  "block": "Manipur Division",
+  "district": "Tengnoupal",
+  "state": "MN"
+ },
+ {
+  "pin": "474006",
+  "office": "Morar H.O",
+  "block": "Gwalior Division",
+  "district": "Gwalior",
+  "state": "MP"
+ },
+ {
+  "pin": "473001",
+  "office": "Guna H.O",
+  "block": "Guna Division",
+  "district": "Guna",
+  "state": "MP"
+ },
+ {
+  "pin": "473331",
+  "office": "Ashoknagar H.O",
+  "block": "Guna Division",
+  "district": "Ashoknagar",
+  "state": "MP"
+ },
+ {
+  "pin": "480661",
+  "office": "Seoni H.O",
+  "block": "Balaghat Division",
+  "district": "Seoni",
+  "state": "MP"
+ },
+ {
+  "pin": "481001",
+  "office": "Balaghat H.O",
+  "block": "Balaghat Division",
+  "district": "Balaghat",
+  "state": "MP"
+ },
+ {
+  "pin": "458001",
+  "office": "Mandsaur H.O",
+  "block": "Mandsaur Division",
+  "district": "Mandsaur",
+  "state": "MP"
+ },
+ {
+  "pin": "457001",
+  "office": "Ratlam H.O",
+  "block": "Ratlam Division",
+  "district": "Ratlam",
+  "state": "MP"
+ },
+ {
+  "pin": "465661",
+  "office": "Rajgarh(Bia) H.O",
+  "block": "Sehore Division",
+  "district": "Rajgarh",
+  "state": "MP"
+ },
+ {
+  "pin": "796001",
+  "office": "Aizawl H.O",
+  "block": "Mizoram Division",
+  "district": "Aizawl",
+  "state": "MZ"
+ },
+ {
+  "pin": "796261",
+  "office": "Suangpuilawn B.O",
+  "block": "Mizoram Division",
+  "district": "Saitual",
+  "state": "MZ"
+ },
+ {
+  "pin": "796181",
+  "office": "Kanghmun 'S' B.O",
+  "block": "Mizoram Division",
+  "district": "Serchhip",
+  "state": "MZ"
+ },
+ {
+  "pin": "796091",
+  "office": "N.Chawnpui B.O",
+  "block": "Mizoram Division",
+  "district": "Kolasib",
+  "state": "MZ"
+ },
+ {
+  "pin": "796691",
+  "office": "Haulawng B.O",
+  "block": "Mizoram Division",
+  "district": "Lunglei",
+  "state": "MZ"
+ },
+ {
+  "pin": "796470",
+  "office": "Hriphaw B.O",
+  "block": "Mizoram Division",
+  "district": "Mamit",
+  "state": "MZ"
+ },
+ {
+  "pin": "796581",
+  "office": "Bualpui H B.O",
+  "block": "Mizoram Division",
+  "district": "Hnahthial",
+  "state": "MZ"
+ },
+ {
+  "pin": "796321",
+  "office": "Kelkang B.O",
+  "block": "Mizoram Division",
+  "district": "Champhai",
+  "state": "MZ"
+ },
+ {
+  "pin": "797001",
+  "office": "Kohima H.O",
+  "block": "Nagaland Division",
+  "district": "Kohima",
+  "state": "NL"
+ },
+ {
+  "pin": "797115",
+  "office": "Daroga Pathar B.O",
+  "block": "Nagaland Division",
+  "district": "Dimapur",
+  "state": "NL"
+ },
+ {
+  "pin": "798618",
+  "office": "Merangkong B.O",
+  "block": "Nagaland Division",
+  "district": "Mokokchung",
+  "state": "NL"
+ },
+ {
+  "pin": "797105",
+  "office": "Mishilimi B.O",
+  "block": "Nagaland Division",
+  "district": "Zunheboto",
+  "state": "NL"
+ },
+ {
+  "pin": "798603",
+  "office": "Tobu B.O",
+  "block": "Nagaland Division",
+  "district": "Mon",
+  "state": "NL"
+ },
+ {
+  "pin": "797108",
+  "office": "Middle Khomi B.O",
+  "block": "Nagaland Division",
+  "district": "Phek",
+  "state": "NL"
+ },
+ {
+  "pin": "798625",
+  "office": "Sakchi B.O",
+  "block": "Nagaland Division",
+  "district": "Longleng",
+  "state": "NL"
+ },
+ {
+  "pin": "798612",
+  "office": "Yangpi B.O",
+  "block": "Nagaland Division",
+  "district": "Tuensang",
+  "state": "NL"
+ },
+ {
+  "pin": "756001",
+  "office": "Balasore H.O",
+  "block": "Balasore Division",
+  "district": "Baleshwar",
+  "state": "OD"
+ },
+ {
+  "pin": "756100",
+  "office": "Bhadrak H.O",
+  "block": "Bhadrak Division",
+  "district": "Bhadrak",
+  "state": "OD"
+ },
+ {
+  "pin": "770001",
+  "office": "Sundargarh H.O",
+  "block": "Sundargarh Division",
+  "district": "Sundargarh",
+  "state": "OD"
+ },
+ {
+  "pin": "754211",
+  "office": "Kendrapara H.O",
+  "block": "Cuttack North Division",
+  "district": "Kendrapara",
+  "state": "OD"
+ },
+ {
+  "pin": "752055",
+  "office": "Khurda H.O",
+  "block": "Bhubaneswar Division",
+  "district": "Khordha",
+  "state": "OD"
+ },
+ {
+  "pin": "768028",
+  "office": "Bargarh H.O",
+  "block": "Sambalpur Division",
+  "district": "Bargarh",
+  "state": "OD"
+ },
+ {
+  "pin": "759001",
+  "office": "Dhenkanal H.O",
+  "block": "Dhenkanal Division",
+  "district": "Dhenkanal",
+  "state": "OD"
+ },
+ {
+  "pin": "753002",
+  "office": "Chandinchowk H.O",
+  "block": "Cuttack City Division",
+  "district": "Cuttack",
+  "state": "OD"
+ },
+ {
+  "pin": "142001",
+  "office": "Moga HO",
+  "block": "Faridkot Division",
+  "district": "Moga",
+  "state": "PB"
+ },
+ {
+  "pin": "142026",
+  "office": "Jagraon HO",
+  "block": "Ludhiana Moffusil Division",
+  "district": "Ludhiana",
+  "state": "PB"
+ },
+ {
+  "pin": "152001",
+  "office": "Ferozepur HO",
+  "block": "Ferozpur Division",
+  "district": "Firozepur",
+  "state": "PB"
+ },
+ {
+  "pin": "151001",
+  "office": "Bathinda HO",
+  "block": "Bhatinda Division",
+  "district": "Bathinda",
+  "state": "PB"
+ },
+ {
+  "pin": "143505",
+  "office": "Batala HO",
+  "block": "Gurdaspur Division",
+  "district": "Gurdaspur",
+  "state": "PB"
+ },
+ {
+  "pin": "143401",
+  "office": "Tarn Taran HO",
+  "block": "Amritsar Division",
+  "district": "Tarn Taran",
+  "state": "PB"
+ },
+ {
+  "pin": "140001",
+  "office": "Ropar HO",
+  "block": "Chandigarh Division",
+  "district": "Rupnagar",
+  "state": "PB"
+ },
+ {
+  "pin": "147001",
+  "office": "Patiala HO",
+  "block": "Patiala Division",
+  "district": "Patiala",
+  "state": "PB"
+ },
+ {
+  "pin": "605001",
+  "office": "Pondicherry HO",
+  "block": "Pondicherry Division",
+  "district": "Pondicherry",
+  "state": "PY"
+ },
+ {
+  "pin": "673310",
+  "office": "Pandakkal BO",
+  "block": "Vadakara Division",
+  "district": "Mahe",
+  "state": "PY"
+ },
+ {
+  "pin": "609603",
+  "office": "Melakasakudi B.O",
+  "block": "Nagapattinam Division",
+  "district": "Karaikal",
+  "state": "PY"
+ },
+ {
+  "pin": "533464",
+  "office": "Yanam S.O",
+  "block": "Kakinada Division",
+  "district": "Yanam",
+  "state": "PY"
+ },
+ {
+  "pin": "335512",
+  "office": "Hanumangarh Jn. H.O",
+  "block": "Sriganganagar Division",
+  "district": "Hanumangarh",
+  "state": "RJ"
+ },
+ {
+  "pin": "307001",
+  "office": "Sirohi H.O",
+  "block": "Sirohi Division",
+  "district": "Sirohi",
+  "state": "RJ"
+ },
+ {
+  "pin": "335001",
+  "office": "Sriganganagar H.O",
+  "block": "Sriganganagar Division",
+  "district": "Ganganagar",
+  "state": "RJ"
+ },
+ {
+  "pin": "313324",
+  "office": "Kankroli H.O",
+  "block": "Udaipur Division",
+  "district": "Rajsamand",
+  "state": "RJ"
+ },
+ {
+  "pin": "311001",
+  "office": "Bhilwara H.O",
+  "block": "Bhilwara Division",
+  "district": "Bhilwara",
+  "state": "RJ"
+ },
+ {
+  "pin": "301701",
+  "office": "Bahror H.O",
+  "block": "Alwar Division",
+  "district": "Alwar",
+  "state": "RJ"
+ },
+ {
+  "pin": "341303",
+  "office": "Didwana H.O",
+  "block": "Nagaur Division",
+  "district": "Nagaur",
+  "state": "RJ"
+ },
+ {
+  "pin": "306401",
+  "office": "Pali Marwar H.O",
+  "block": "Pali Division",
+  "district": "Pali",
+  "state": "RJ"
+ },
+ {
+  "pin": "737101",
+  "office": "Gangtok HO",
+  "block": "Sikkim Division",
+  "district": "East District",
+  "state": "SK"
+ },
+ {
+  "pin": "737128",
+  "office": "Melli Dara BO",
+  "block": "Sikkim Division",
+  "district": "South District",
+  "state": "SK"
+ },
+ {
+  "pin": "737120",
+  "office": "Lachen BO",
+  "block": "Sikkim Division",
+  "district": "North District",
+  "state": "SK"
+ },
+ {
+  "pin": "737111",
+  "office": "Chingthang BO",
+  "block": "Sikkim Division",
+  "district": "West District",
+  "state": "SK"
+ },
+ {
+  "pin": "600045",
+  "office": "Tambaram HO",
+  "block": "Tambaram Division",
+  "district": "Chengalpattu",
+  "state": "TN"
+ },
+ {
+  "pin": "637211",
+  "office": "Tiruchengodu H.O",
+  "block": "Namakkal Division",
+  "district": "Namakkal",
+  "state": "TN"
+ },
+ {
+  "pin": "641001",
+  "office": "Coimbatore HO",
+  "block": "Coimbatore Division",
+  "district": "Coimbatore",
+  "state": "TN"
+ },
+ {
+  "pin": "630561",
+  "office": "Sivaganga HO",
+  "block": "Sivaganga Division",
+  "district": "Sivaganga",
+  "state": "TN"
+ },
+ {
+  "pin": "628601",
+  "office": "Srivaikuntam H.O",
+  "block": "Tuticorin Division",
+  "district": "Tuticorin",
+  "state": "TN"
+ },
+ {
+  "pin": "635001",
+  "office": "Krishnagiri H.O",
+  "block": "Krishnagiri Division",
+  "district": "Krishnagiri",
+  "state": "TN"
+ },
+ {
+  "pin": "638656",
+  "office": "Dharapuram HO",
+  "block": "Tirupur Division",
+  "district": "Tiruppur",
+  "state": "TN"
+ },
+ {
+  "pin": "625513",
+  "office": "Bodinayakanur H.O",
+  "block": "Theni Division",
+  "district": "Theni",
+  "state": "TN"
+ },
+ {
+  "pin": "799001",
+  "office": "Agartala H.O",
+  "block": "Agartala Division",
+  "district": "West Tripura",
+  "state": "TR"
+ },
+ {
+  "pin": "799120",
+  "office": "Radhakishorepur H.O",
+  "block": "Agartala Division",
+  "district": "Gomati",
+  "state": "TR"
+ },
+ {
+  "pin": "799250",
+  "office": "Dharmanagar H.O",
+  "block": "Dharmanagar Division",
+  "district": "North Tripura",
+  "state": "TR"
+ },
+ {
+  "pin": "799143",
+  "office": "Dakshin Manubankul B.O",
+  "block": "Agartala Division",
+  "district": "South Tripura",
+  "state": "TR"
+ },
+ {
+  "pin": "799115",
+  "office": "Kemtali B.O",
+  "block": "Agartala Division",
+  "district": "Sepahijala",
+  "state": "TR"
+ },
+ {
+  "pin": "799104",
+  "office": "Raima B.O",
+  "block": "Agartala Division",
+  "district": "Dhalai",
+  "state": "TR"
+ },
+ {
+  "pin": "799207",
+  "office": "Bharatsardarbari B.O",
+  "block": "Dharmanagar Division",
+  "district": "Khowai",
+  "state": "TR"
+ },
+ {
+  "pin": "799290",
+  "office": "Emrapassa B.O",
+  "block": "Dharmanagar Division",
+  "district": "Unakoti",
+  "state": "TR"
+ },
+ {
+  "pin": "506167",
+  "office": "Jangaon H.O",
+  "block": "Hanamkonda Division",
+  "district": "Jangoan",
+  "state": "TS"
+ },
+ {
+  "pin": "509001",
+  "office": "Mahabubnagar H.O",
+  "block": "Mahabubnagar Division",
+  "district": "Mahabubnagar",
+  "state": "TS"
+ },
+ {
+  "pin": "506101",
+  "office": "Mahabubabad H.O",
+  "block": "Warangal Division",
+  "district": "Mahabubabad",
+  "state": "TS"
+ },
+ {
+  "pin": "505172",
+  "office": "Peddapalli H.O",
+  "block": "Peddapalli Division",
+  "district": "Peddapalli",
+  "state": "TS"
+ },
+ {
+  "pin": "509125",
+  "office": "Gadwal H.O",
+  "block": "Mahabubnagar Division",
+  "district": "Jogulamba Gadwal",
+  "state": "TS"
+ },
+ {
+  "pin": "500015",
+  "office": "Trimulgherry H.O",
+  "block": "Secunderabad Division",
+  "district": "Hyderabad",
+  "state": "TS"
+ },
+ {
+  "pin": "506164",
+  "office": "Parkal H.O",
+  "block": "Hanamkonda Division",
+  "district": "Warangal Rural",
+  "state": "TS"
+ },
+ {
+  "pin": "504208",
+  "office": "Mancherial H.O",
+  "block": "Adilabad Division",
+  "district": "Mancherial",
+  "state": "TS"
+ },
+ {
+  "pin": "248001",
+  "office": "Dehradun GPO",
+  "block": "Dehradun Division",
+  "district": "Dehradun",
+  "state": "UK"
+ },
+ {
+  "pin": "263645",
+  "office": "Ranikhet HO",
+  "block": "Almora Division",
+  "district": "Almora",
+  "state": "UK"
+ },
+ {
+  "pin": "246149",
+  "office": "Kotdwara HO",
+  "block": "Pauri Division",
+  "district": "Pauri Garhwal",
+  "state": "UK"
+ },
+ {
+  "pin": "249001",
+  "office": "Tehri HO",
+  "block": "Tehri Division",
+  "district": "Tehri Garhwal",
+  "state": "UK"
+ },
+ {
+  "pin": "262501",
+  "office": "Pithoragarh HO",
+  "block": "Pithoragarh Division",
+  "district": "Pithoragarh",
+  "state": "UK"
+ },
+ {
+  "pin": "246401",
+  "office": "Gopeshwar HO",
+  "block": "Chamoli Division",
+  "district": "Chamoli",
+  "state": "UK"
+ },
+ {
+  "pin": "247667",
+  "office": "Roorkee HO",
+  "block": "Dehradun Division",
+  "district": "Haridwar",
+  "state": "UK"
+ },
+ {
+  "pin": "263001",
+  "office": "Nainital HO",
+  "block": "Nainital Division",
+  "district": "Nainital",
+  "state": "UK"
+ },
+ {
+  "pin": "209601",
+  "office": "Fatehgarh HO",
+  "block": "Fatehgarh Division",
+  "district": "Farrukhabad",
+  "state": "UP"
+ },
+ {
+  "pin": "209801",
+  "office": "Unnao HO",
+  "block": "Kanpur Moffusil Division",
+  "district": "Unnao",
+  "state": "UP"
+ },
+ {
+  "pin": "224001",
+  "office": "Faizabad HO",
+  "block": "Faizabad Division",
+  "district": "Ayodhya",
+  "state": "UP"
+ },
+ {
+  "pin": "224122",
+  "office": "Akbarpur HO",
+  "block": "Faizabad Division",
+  "district": "Ambedkar Nagar",
+  "state": "UP"
+ },
+ {
+  "pin": "212601",
+  "office": "Fatehpur HO",
+  "block": "Fatehpur Division",
+  "district": "Fatehpur",
+  "state": "UP"
+ },
+ {
+  "pin": "208004",
+  "office": "Kanpur Cantt HO",
+  "block": "Kanpur City Division",
+  "district": "Kanpur Nagar",
+  "state": "UP"
+ },
+ {
+  "pin": "225001",
+  "office": "Barabanki HO",
+  "block": "Barabanki Division",
+  "district": "Barabanki",
+  "state": "UP"
+ },
+ {
+  "pin": "247001",
+  "office": "Saharanpur HO",
+  "block": "Saharanpur Division",
+  "district": "Saharanpur",
+  "state": "UP"
+ },
+ {
+  "pin": "735101",
+  "office": "Jalpaiguri HO",
+  "block": "Jalpaiguri Division",
+  "district": "Jalpaiguri",
+  "state": "WB"
+ },
+ {
+  "pin": "732101",
+  "office": "Malda HO",
+  "block": "Malda Division",
+  "district": "Maldah",
+  "state": "WB"
+ },
+ {
+  "pin": "700033",
+  "office": "Tollygunge HO",
+  "block": "South Kolkata Division",
+  "district": "Kolkata",
+  "state": "WB"
+ },
+ {
+  "pin": "721101",
+  "office": "Midnapore HO",
+  "block": "Midnapore Division",
+  "district": "Medinipur West",
+  "state": "WB"
+ },
+ {
+  "pin": "731224",
+  "office": "Rampurhat HO",
+  "block": "Birbhum Division",
+  "district": "Birbhum",
+  "state": "WB"
+ },
+ {
+  "pin": "734101",
+  "office": "Darjeeling HO",
+  "block": "Darjeeling Division",
+  "district": "Darjeeling",
+  "state": "WB"
+ },
+ {
+  "pin": "741101",
+  "office": "Krishnanagar HO",
+  "block": "Nadia North Division",
+  "district": "Nadia",
+  "state": "WB"
+ },
+ {
+  "pin": "700144",
+  "office": "Baruipur HO",
+  "block": "South Presidency Division",
+  "district": "24 Paraganas South",
+  "state": "WB"
+ }
+]

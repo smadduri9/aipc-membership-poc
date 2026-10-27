@@ -68,10 +68,6 @@ class Application {
   String professionalDomain = '';
   String? professionalDomainOther;
 
-  // Voter ID and referrer were removed from registration in V2. They stay until the registration screens are rebuilt.
-  String? voterId;
-  String? referrerPhone;
-
   /// State or UT code from the reference data, for example PB.
   String state = '';
   String? stateOther;

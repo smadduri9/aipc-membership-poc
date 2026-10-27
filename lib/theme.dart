@@ -16,6 +16,12 @@ class AppColors {
 
 /// Text sizes from Apple's Human Interface Guidelines type scale.
 class AppText {
+  static const sectionTitle = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    color: AppColors.navy,
+  );
+
   static const largeTitle = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
