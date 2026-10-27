@@ -2,181 +2,147 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:provider/provider.dart';
 
+import 'package:aipc_poc/data/mock_repository.dart';
 import 'package:aipc_poc/main.dart' as app;
-import 'package:aipc_poc/widgets/avatar.dart';
-import 'package:aipc_poc/widgets/cupertino_select.dart';
+import 'package:aipc_poc/models/application.dart';
+import 'package:aipc_poc/state/app_state.dart';
 
-/// Walks the full member and admin journey on a simulator and screenshots every screen.
+/// Member journey from landing to submitted application, then approval by the state representative
+/// and payment. Runs on a simulator; English copy is selected at the start.
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<void> wait(WidgetTester tester, [int ms = 800]) async {
-    for (var elapsed = 0; elapsed < ms; elapsed += 100) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
+  Future<void> settle(WidgetTester tester) =>
+      tester.pumpAndSettle(const Duration(seconds: 3));
+
+  /// Scrolls the form until the field is built, since long forms build items lazily.
+  Future<void> reveal(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(
+      finder,
+      150,
+      scrollable: find.byType(Scrollable).first,
+    );
   }
 
-  testWidgets('full demo walkthrough', (tester) async {
-    var step = 0;
-    Future<void> shot(String name) async {
-      step++;
-      await wait(tester, 400);
-      await binding.takeScreenshot('${step.toString().padLeft(2, '0')}-$name');
-    }
-
-    Future<void> pick(String label) async {
-      await tester.tap(find.widgetWithText(CupertinoSelect, label));
-      await wait(tester, 600);
-      await tester.tap(find.text('हो गया'));
-      await wait(tester, 600);
-    }
-
+  testWidgets('member applies, is approved, chooses a plan and pays', (
+    tester,
+  ) async {
     app.main();
-    await wait(tester, 2500);
-    await shot('language');
+    await settle(tester);
 
-    await tester.tap(find.text('आगे बढ़ें'));
-    await wait(tester);
-    await tester.enterText(find.byType(CupertinoTextField).first, '9876543210');
-    await tester.tap(find.byType(CupertinoSwitch));
-    await wait(tester, 300);
-    await shot('phone');
-
-    await tester.tap(find.text('OTP भेजें'));
-    await wait(tester, 1500);
-    await shot('otp');
-
-    await tester.enterText(find.byType(CupertinoTextField).first, '123456');
-    await wait(tester, 300);
-    await tester.tap(find.text('सत्यापित करें'));
-    await wait(tester, 1500);
-    await shot('home');
-
-    await tester.tap(find.text('सदस्य बनें'));
-    await wait(tester);
-    await tester.enterText(
-      find.widgetWithText(TextField, 'पूरा नाम *'),
-      'Ravi Kumar',
-    );
-    await tester.tap(find.widgetWithText(CupertinoSelect, 'पेशेवर क्षेत्र *'));
-    await wait(tester, 600);
-    await shot('domain-picker');
-    await tester.tap(find.text('हो गया'));
-    await wait(tester, 600);
-    await shot('register-personal');
-
-    // Language can be changed mid-journey without losing entered data.
-    await tester.tap(find.byIcon(CupertinoIcons.globe));
-    await wait(tester, 600);
-    await shot('language-sheet');
+    // Landing waits for Next; language follows; then Member.
+    expect(find.text('AICP'), findsOneWidget);
+    await tester.tap(find.text('आगे'));
+    await settle(tester);
     await tester.tap(find.text('English'));
-    await wait(tester, 600);
-    await shot('register-personal-english');
-    await tester.tap(find.byIcon(CupertinoIcons.globe));
-    await wait(tester, 600);
-    await tester.tap(find.text('हिन्दी'));
-    await wait(tester, 600);
+    await settle(tester);
+    await tester.tap(find.text('Continue'));
+    await settle(tester);
+    await tester.tap(find.text('Member'));
+    await settle(tester);
 
-    await tester.tap(find.text('आगे'));
-    await wait(tester);
-    await pick('राज्य *');
-    await pick('लोकसभा क्षेत्र *');
-    await pick('विधानसभा क्षेत्र *');
+    // Phone and OTP (demo code 123456).
+    await tester.enterText(find.byType(CupertinoTextField).first, '9812345678');
+    await tester.tap(find.byType(CupertinoSwitch).first);
+    await settle(tester);
+    await tester.tap(find.text('Send OTP'));
+    await settle(tester);
+    for (var i = 0; i < 6; i++) {
+      await tester.enterText(find.byType(CupertinoTextField).at(i), '${i + 1}');
+      await tester.pump();
+    }
+    await tester.tap(find.text('Verify'));
+    await tester.pump(const Duration(milliseconds: 1200));
+    await tester.pump();
+    await tester.tap(find.text('Become a Member'));
+    await settle(tester);
+
+    // Step 1: identity and domain.
     await tester.enterText(
-      find.widgetWithText(TextField, 'पिन कोड *'),
-      '141001',
+      find.widgetWithText(TextField, 'First name'),
+      'Asha',
     );
-    await wait(tester, 300);
-    await shot('register-location');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Last name'),
+      'Verma',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Aadhaar number'),
+      '2345 6789 0124',
+    );
+    await tester.scrollUntilVisible(
+      find.text('Choose your domain'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text('Choose your domain'));
+    await settle(tester);
+    await tester.tap(find.text('Academia'));
+    await settle(tester);
+    await tester.tap(find.text('Continue'));
+    await settle(tester);
 
-    await tester.tap(find.text('आगे'));
-    await wait(tester);
-    await tester.tap(find.text('सेल्फ़ी लें'));
-    await wait(tester, 600);
-    await shot('selfie-sheet');
-    await tester.tap(find.byType(Avatar).at(1));
-    await wait(tester, 600);
-    await shot('register-selfie');
+    // Step 2: location from PIN code.
+    await tester.enterText(
+      find.widgetWithText(TextField, 'PIN code'),
+      '142026',
+    );
+    await settle(tester);
+    await reveal(tester, find.widgetWithText(TextField, 'City / Village'));
+    await tester.enterText(
+      find.widgetWithText(TextField, 'City / Village'),
+      'Ludhiana',
+    );
+    await tester.tap(find.text('Continue'));
+    await settle(tester);
 
-    await tester.tap(find.text('आगे'));
-    await wait(tester);
-    await shot('register-membership');
-
-    await tester.tap(find.text('आगे'));
-    await wait(tester);
-    await shot('review');
-
+    // Step 3: photo (demo capture on the simulator), one social link, consent.
+    await tester.pump(const Duration(seconds: 2));
+    await tester.tap(find.textContaining('Take photo').first);
+    await settle(tester);
+    await reveal(tester, find.widgetWithText(TextField, 'Instagram'));
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Instagram'),
+      'https://www.instagram.com/ashaverma',
+    );
+    await reveal(tester, find.byType(CupertinoSwitch));
     await tester.tap(find.byType(CupertinoSwitch));
-    await wait(tester, 300);
-    await tester.tap(find.textContaining('जमा करें'));
-    await wait(tester, 1500);
-    await tester.tap(find.text('PhonePe'));
-    await wait(tester, 300);
-    await shot('payment');
+    await settle(tester);
+    await tester.tap(find.text('Submit application'));
+    await settle(tester);
+    expect(find.text('Application received'), findsOneWidget);
 
+    // State representative for Punjab approves the application.
+    final repo = tester
+        .element(find.byType(Scaffold).first)
+        .read<MockRepository>();
+    final application = repo.applications.lastWhere(
+      (a) => a.phone == '9812345678',
+    );
+    await repo.approve(application.referenceNo, 'pb@aipc.demo');
+    await settle(tester);
+
+    // Member chooses the AICP Member plan and pays.
+    await tester.tap(find.text('Track application'));
+    await settle(tester);
+    await tester.tap(find.text('Choose membership'));
+    await settle(tester);
+    await tester.tap(find.text('AICP Member'));
+    await settle(tester);
+    await tester.tap(find.text('Continue'));
+    await settle(tester);
+    expect(application.status, AppStatus.awaitingPayment);
+    await tester.tap(find.text('Continue to payment'));
+    await settle(tester);
     await tester.tap(find.text('Simulate success'));
-    await wait(tester, 3000);
-    await shot('payment-success');
-
-    await tester.tap(find.text('स्थिति देखें'));
-    await wait(tester);
-    await shot('status-awaiting');
-
-    await tester.tap(find.byType(BackButton));
-    await wait(tester);
-    await shot('home-with-application');
-
-    await tester.tap(find.text('Admin login (demo)'));
-    await wait(tester);
-    await tester.enterText(
-      find.widgetWithText(TextField, 'Email'),
-      'master@aipc.demo',
+    await tester.pump(const Duration(seconds: 2));
+    await settle(tester);
+    expect(application.status, AppStatus.active);
+    expect(
+      tester.element(find.byType(Scaffold).first).read<AppState>().phone,
+      '9812345678',
     );
-    await tester.enterText(
-      find.widgetWithText(TextField, 'Password'),
-      'demo1234',
-    );
-    await wait(tester, 300);
-    await shot('admin-login');
-
-    await tester.tap(find.text('Log in'));
-    await wait(tester, 1500);
-    await shot('admin-dashboard');
-
-    await tester.tap(find.text('Applications'));
-    await wait(tester);
-    await shot('admin-list');
-
-    await tester.tap(find.textContaining('000101'));
-    await wait(tester);
-    await shot('admin-detail');
-
-    await tester.tap(find.text('Approve'));
-    await wait(tester, 600);
-    await shot('admin-approve-dialog');
-    await tester.tap(find.text('Approve').last);
-    await wait(tester, 1500);
-    await shot('admin-approved');
-
-    await tester.tap(find.byType(BackButton));
-    await wait(tester);
-    await tester.tap(find.byType(BackButton));
-    await wait(tester);
-    await tester.tap(find.text('Audit log'));
-    await wait(tester);
-    await shot('admin-audit');
-
-    await tester.tap(find.byType(BackButton));
-    await wait(tester);
-    await tester.tap(find.byIcon(Icons.close));
-    await wait(tester);
-    await tester.tap(find.text('स्थिति देखें'));
-    await wait(tester);
-    await shot('status-approved');
-
-    await tester.tap(find.text('सदस्यता कार्ड देखें'));
-    await wait(tester);
-    await shot('membership-card');
   });
 }

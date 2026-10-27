@@ -56,7 +56,9 @@ class _LandingScreenState extends State<LandingScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.sheet,
+      // Expand so the card below the photo is inside the hit-test area. Without this the stack is only as tall as the photo and the Next button cannot be tapped.
       body: Stack(
+        fit: StackFit.expand,
         children: [
           SizedBox(
             height: photoHeight,
@@ -103,73 +105,77 @@ class _LandingScreenState extends State<LandingScreen> {
               ),
               child: SafeArea(
                 top: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        t(context, 'landing_title'),
-                        style: const TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                          color: AppColors.navy,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 28, 24, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          t(context, 'landing_title'),
+                          style: const TextStyle(
+                            fontSize: 34,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            color: AppColors.navy,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        t(context, 'landing_full_name'),
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey,
+                        const SizedBox(height: 4),
+                        Text(
+                          t(context, 'landing_full_name'),
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.grey,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 14),
-                      const _TricolourRule(),
-                      const SizedBox(height: 18),
-                      SizedBox(
-                        height: compact ? 84 : 96,
-                        child: PageView(
-                          controller: _pages,
-                          onPageChanged: (i) => setState(() => _page = i),
+                        const SizedBox(height: 14),
+                        const _TricolourRule(),
+                        const SizedBox(height: 18),
+                        SizedBox(
+                          height: compact ? 84 : 96,
+                          child: PageView(
+                            controller: _pages,
+                            onPageChanged: (i) => setState(() => _page = i),
+                            children: [
+                              for (final (title, body) in cards)
+                                _ValueCard(
+                                  title: t(context, title),
+                                  body: t(context, body),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            for (final (title, body) in cards)
-                              _ValueCard(
-                                title: t(context, title),
-                                body: t(context, body),
+                            for (var i = 0; i < cards.length; i++)
+                              AnimatedContainer(
+                                duration: reduceMotion
+                                    ? Duration.zero
+                                    : const Duration(milliseconds: 250),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 3,
+                                ),
+                                width: i == _page ? 20 : 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: i == _page
+                                      ? AppColors.navy
+                                      : AppColors.navy.withValues(alpha: 0.25),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (var i = 0; i < cards.length; i++)
-                            AnimatedContainer(
-                              duration: reduceMotion
-                                  ? Duration.zero
-                                  : const Duration(milliseconds: 250),
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              width: i == _page ? 20 : 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: i == _page
-                                    ? AppColors.navy
-                                    : AppColors.navy.withValues(alpha: 0.25),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const Spacer(),
-                      PrimaryButton(
-                        label: t(context, 'next'),
-                        onPressed: _next,
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        PrimaryButton(
+                          label: t(context, 'next'),
+                          onPressed: _next,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

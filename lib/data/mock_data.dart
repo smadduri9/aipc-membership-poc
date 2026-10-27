@@ -313,45 +313,50 @@ List<_SeedRow> _generatedRows() {
 /// Demo Aadhaar addresses, picked by the last digit of the number. Stands in for the e-KYC address.
 const List<({String state, String district, String pin, String cityVillage})>
 demoAadhaarAddresses = [
-  (
-    state: 'PB',
-    district: 'Ludhiana',
-    pin: '141001',
-    cityVillage: 'Ludhiana Civil Lines',
-  ),
+  (state: 'PB', district: 'Ludhiana', pin: '142026', cityVillage: 'Jagraon HO'),
   (
     state: 'DL',
     district: 'New Delhi',
     pin: '110001',
-    cityVillage: 'Connaught Place',
+    cityVillage: 'Sansad Marg HO',
   ),
-  (state: 'MH', district: 'Pune', pin: '411001', cityVillage: 'Pune Camp'),
+  (state: 'MH', district: 'Nanded', pin: '431601', cityVillage: 'Nanded H.O'),
   (
     state: 'KA',
     district: 'Bengaluru Urban',
     pin: '560001',
-    cityVillage: 'MG Road',
+    cityVillage: 'Bengaluru G.P.O.',
   ),
-  (state: 'WB', district: 'Kolkata', pin: '700001', cityVillage: 'BBD Bagh'),
+  (
+    state: 'WB',
+    district: 'Kolkata',
+    pin: '700033',
+    cityVillage: 'Tollygunge HO',
+  ),
   (
     state: 'TN',
-    district: 'Chennai',
-    pin: '600001',
-    cityVillage: 'Parry Corner',
+    district: 'Chengalpattu',
+    pin: '600045',
+    cityVillage: 'Tambaram HO',
   ),
-  (state: 'UP', district: 'Lucknow', pin: '226001', cityVillage: 'Hazratganj'),
-  (state: 'RJ', district: 'Jaipur', pin: '302001', cityVillage: 'Johari Bazar'),
   (
-    state: 'OD',
-    district: 'Khordha',
-    pin: '751001',
-    cityVillage: 'Saheed Nagar',
+    state: 'UP',
+    district: 'Farrukhabad',
+    pin: '209601',
+    cityVillage: 'Fatehgarh HO',
   ),
+  (
+    state: 'RJ',
+    district: 'Hanumangarh',
+    pin: '335512',
+    cityVillage: 'Hanumangarh Jn. H.O',
+  ),
+  (state: 'OD', district: 'Khordha', pin: '752055', cityVillage: 'Khurda H.O'),
   (
     state: 'KL',
     district: 'Ernakulam',
-    pin: '682001',
-    cityVillage: 'Marine Drive',
+    pin: '682011',
+    cityVillage: 'Ernakulam HO',
   ),
 ];
 

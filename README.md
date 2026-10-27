@@ -4,15 +4,15 @@
 
 ## Overview
 
-This proof of concept shows the membership journey for the All India Professionals' Congress (AIPC) on iPhone. A member chooses a language, verifies a mobile number, completes a four-step registration, pays a membership fee through a simulated payment screen, follows the status of the application and receives a membership card. An administrator reviews applications, approves or rejects them, and reviews an audit log.
+This proof of concept shows the membership journey for the All India Professionals' Congress (AIPC) on iPhone. A member sees an introduction, chooses a language, verifies a mobile number and completes a three-step application. A state representative reviews applications for their state. Once approved, the member chooses a membership, pays through a simulated payment screen and receives a membership card. Members receive in-app notices. The master login sees all states.
 
 ## What is simulated
 
 - **Login:** a fixed demo code replaces SMS verification.
 - **Payment:** the payment sheet is a demonstration. No money is charged.
 - **Data:** all records are held in memory and reset when the app restarts.
-- **Selfie:** placeholder avatars replace the camera.
-- **Constituencies and names:** sample data only.
+- **Photo:** the camera is live where available; otherwise a demo capture is used.
+- **Constituencies, districts and names:** sample data only. PIN code lookups use a small sample of the official directory.
 
 ## Running the app
 
@@ -26,23 +26,25 @@ flutter run
 
 ## Demo access
 
-| Role   | Sign-in                       |
-|--------|-------------------------------|
-| Member | Mobile 9876543210, code 123456 |
-| Admin  | admin@aipc.demo, password demo1234 |
+| Role | Sign-in |
+|------|---------|
+| Member | Mobile 9876543210 (new), OTP 123456 |
+| Master admin | master@aipc.demo, password demo1234 |
+| State representative | e.g. pb@aipc.demo (Punjab), password demo1234. Every state and union territory has one. |
 
 ## Suggested walkthrough
 
-1. Choose a language. Hindi is the default.
-2. Enter the demo mobile number, tick the consent box and request a code.
-3. Enter the demo code to open the home screen.
-4. Select **Become a Member** and complete the four registration steps.
-5. Review the details and confirm them.
-6. Choose a payment method and select **Simulate success**.
-7. View the status timeline, showing the application awaiting approval.
-8. Sign in as the administrator and open the application.
-9. Approve the application, then check the audit log and export the list as CSV.
-10. Return to the member app to see the approved status and membership card.
+1. Open the app on the landing page and tap **Next**.
+2. Choose a language (Hindi is the default).
+3. Choose **Member**, enter the demo mobile number and the demo code.
+4. Complete the three registration steps: identity and domain, location (try PIN 142026), and photo with one social profile link.
+5. Sign in as a state representative (for example pb@aipc.demo) and approve the application.
+6. Back in the member app, choose a membership, review and pay with **Simulate success**.
+7. Sign in as master@aipc.demo to see all states, or open a state's dashboard.
+
+### Mac webcam demo
+
+The iOS Simulator cannot use a camera. To use your Mac's webcam, open `ios/Runner.xcworkspace` in Xcode, choose the destination **My Mac (Designed for iPad)** and run. Without a camera the app shows a demo capture button instead.
 
 ## Languages
 
