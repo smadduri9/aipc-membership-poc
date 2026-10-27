@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_repository.dart';
+import '../../state/app_state.dart';
 import '../../utils/format.dart';
 import '../../widgets/demo_badge.dart';
 
@@ -10,7 +11,11 @@ class AdminAuditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = context.watch<MockRepository>().auditLog;
+    final admin = context.watch<AppState>().admin;
+    final entries = context.watch<MockRepository>().auditLog.where((e) {
+      if (admin == null || admin.isMaster) return true;
+      return e.referenceNo.contains('-${admin.stateCode}-');
+    }).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Audit log'),

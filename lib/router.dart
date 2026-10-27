@@ -105,6 +105,13 @@ GoRouter buildRouter() {
             builder: (context, state) => const AdminDashboardScreen(),
             routes: [
               GoRoute(
+                path: 'state/:code',
+                builder: (context, state) {
+                  final code = state.pathParameters['code'] ?? '';
+                  return StateDashboardScreen(stateCode: code, asMaster: true);
+                },
+              ),
+              GoRoute(
                 path: 'list',
                 builder: (context, state) => const AdminListScreen(),
               ),
