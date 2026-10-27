@@ -1,148 +1,104 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_data.dart';
 import '../../data/mock_repository.dart';
-import '../../l10n/strings.dart';
 import '../../models/application.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/format.dart';
-import '../../widgets/avatar.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
-class ReviewScreen extends StatefulWidget {
+/// Read-only summary of everything the member entered, with the chosen plan. Continues to payment.
+class ReviewScreen extends StatelessWidget {
   const ReviewScreen({super.key});
 
   @override
-  State<ReviewScreen> createState() => _ReviewScreenState();
-}
-
-class _ReviewScreenState extends State<ReviewScreen> {
-  bool _confirmed = false;
-  bool _submitting = false;
-
-  Future<void> _submit(Application draft) async {
-    setState(() => _submitting = true);
-    await context.read<MockRepository>().submit(draft);
-    if (!mounted) return;
-    context.go('/home/payment');
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final d = context.watch<AppState>().draft;
+    final phone = context.watch<AppState>().phone ?? '';
+    final app = context.watch<MockRepository>().findByPhone(phone);
     return Scaffold(
       backgroundColor: AppColors.grouped,
       appBar: AppBar(
-        title: Text(t(context, 'review')),
-        actions: const [NavActions()],
+        title: const Text('Review details'),
+        actions: const [NavActions(showLanguage: false)],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
+        child: app == null
+            ? const Center(child: Text('No application found'))
+            : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   _Section(
-                    title: t(context, 'step_personal'),
-                    step: 0,
+                    title: 'Personal',
                     rows: [
-                      (t(context, 'name'), d.name),
-                      (t(context, 'phone'), d.phone),
+                      ('Name', app.name),
+                      ('Mobile', app.phone),
+                      ('Aadhaar', app.aadhaarMasked),
                       (
-                        t(context, 'domain'),
-                        optionLabel(
-                          context.read<AppState>().lang,
-                          d.professionalDomain,
-                        ),
+                        'Professional domain',
+                        app.professionalDomainOther ?? app.professionalDomain,
                       ),
                     ],
                   ),
                   _Section(
-                    title: t(context, 'step_location'),
-                    step: 1,
+                    title: 'Location',
                     rows: [
                       (
-                        t(context, 'state'),
-                        optionLabel(
-                          context.read<AppState>().lang,
-                          stateNames[d.state] ?? '',
-                        ),
+                        'State or UT',
+                        stateNames[app.state] ?? app.stateOther ?? '',
                       ),
-                      (t(context, 'parliamentary'), d.parliamentary),
-                      (t(context, 'assembly'), d.assembly),
-                      (t(context, 'pin_code'), d.pinCode),
+                      ('District', app.districtOther ?? app.district),
+                      ('Tehsil', app.tehsil ?? '—'),
+                      ('Block', app.block ?? '—'),
+                      ('City or village', app.cityVillage),
+                      ('PIN code', app.pinCode),
                     ],
                   ),
-                  _SelfieSection(draft: d),
                   _Section(
-                    title: t(context, 'step_membership'),
-                    step: 3,
+                    title: 'Online',
+                    rows: [
+                      ('Instagram', app.instagramUrl ?? '—'),
+                      ('LinkedIn', app.linkedinUrl ?? '—'),
+                      ('Facebook', app.facebookUrl ?? '—'),
+                    ],
+                  ),
+                  _Section(
+                    title: 'Membership',
                     rows: [
                       (
-                        t(
-                          context,
-                          d.type == MembershipType.patron
-                              ? 'patron'
-                              : 'ordinary',
-                        ),
-                        formatRupees(d.amount),
+                        'Plan',
+                        app.type == MembershipType.patron
+                            ? 'Patron'
+                            : 'AICP Member',
                       ),
+                      ('Amount', formatRupees(app.amount)),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CupertinoSwitch(
-                        value: _confirmed,
-                        onChanged: (v) => setState(() => _confirmed = v),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text(t(context, 'confirm_details'))),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   PrimaryButton(
-                    label:
-                        '${t(context, 'submit_pay')} ${formatRupees(d.amount)}',
-                    loading: _submitting,
-                    onPressed: _confirmed && !_submitting
-                        ? () => _submit(d)
-                        : null,
+                    label: 'Continue to payment',
+                    onPressed: () => context.go('/home/payment'),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
 }
 
 class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.step, required this.rows});
+  const _Section({required this.title, required this.rows});
 
   final String title;
-  final int step;
   final List<(String, String)> rows;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -151,27 +107,11 @@ class _Section extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.navy,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () =>
-                    context.push('/home/register?step=$step&edit=1'),
-                child: Text(t(context, 'edit')),
-              ),
-            ],
-          ),
+          Text(title, style: AppText.sectionTitle),
+          const SizedBox(height: 8),
           for (final (label, value) in rows)
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -182,51 +122,15 @@ class _Section extends StatelessWidget {
                       style: const TextStyle(color: AppColors.grey),
                     ),
                   ),
-                  Expanded(child: Text(value.isEmpty ? '—' : value)),
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ],
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SelfieSection extends StatelessWidget {
-  const _SelfieSection({required this.draft});
-
-  final Application draft;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Avatar(
-            index: draft.selfieIndex ?? 0,
-            initials: initialsOf(draft.name),
-            size: 56,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              t(context, 'step_selfie'),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.navy,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => context.push('/home/register?step=2&edit=1'),
-            child: Text(t(context, 'edit')),
-          ),
         ],
       ),
     );

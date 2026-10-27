@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 
 import '../models/application.dart';
+import '../models/notification.dart';
 import 'mock_data.dart';
 
 /// In-memory stand-in for a backend. Every call waits briefly so the UI feels real.
@@ -14,6 +15,7 @@ class MockRepository extends ChangeNotifier {
 
   final List<Application> applications;
   final List<AuditEntry> auditLog;
+  final List<AppNotification> notifications = [];
   int _nextSeq = 101;
   final _random = Random();
 
@@ -55,10 +57,53 @@ class MockRepository extends ChangeNotifier {
         'AIPC-${draft.state}-26-${_nextSeq.toString().padLeft(6, '0')}';
     _nextSeq++;
     draft.status = AppStatus.submitted;
+    draft.rejectReason = null;
     draft.history.add(StatusEvent(AppStatus.submitted, DateTime.now()));
     if (!applications.contains(draft)) applications.add(draft);
     notifyListeners();
     return draft;
+  }
+
+  List<AppNotification> notificationsFor(String phone) =>
+      notifications.where((n) => n.phone == phone).toList()
+        ..sort((a, b) => b.at.compareTo(a.at));
+
+  int unreadCount(String phone) =>
+      notifications.where((n) => n.phone == phone && !n.read).length;
+
+  void markAllRead(String phone) {
+    for (final n in notifications) {
+      if (n.phone == phone) n.read = true;
+    }
+    notifyListeners();
+  }
+
+  void _notify(Application app, String title, String body) {
+    notifications.insert(
+      0,
+      AppNotification(
+        phone: app.phone,
+        title: title,
+        body: body,
+        at: DateTime.now(),
+      ),
+    );
+  }
+
+  /// Member picks a plan after approval. Patron amount is any value from 50,000 up.
+  Future<void> chooseMembership(
+    String ref,
+    MembershipType type,
+    int amount,
+  ) async {
+    await _wait();
+    final app = findByRef(ref);
+    if (app == null) return;
+    app.type = type;
+    app.amount = type == MembershipType.aicpMember ? 1000 : amount;
+    app.status = AppStatus.awaitingPayment;
+    app.history.add(StatusEvent(AppStatus.awaitingPayment, DateTime.now()));
+    notifyListeners();
   }
 
   /// Simulated payment, after approval. Success makes the membership active.
@@ -74,9 +119,19 @@ class MockRepository extends ChangeNotifier {
           ? now.add(const Duration(days: 730))
           : null;
       app.history.add(StatusEvent(AppStatus.active, now));
+      _notify(
+        app,
+        'Membership active',
+        'Your AICP membership is active. Your card is ready.',
+      );
     } else {
       app.status = AppStatus.paymentFailed;
       app.history.add(StatusEvent(AppStatus.paymentFailed, now));
+      _notify(
+        app,
+        'Payment failed',
+        'Your payment did not go through. Please try again.',
+      );
     }
     notifyListeners();
   }
@@ -153,6 +208,11 @@ class MockRepository extends ChangeNotifier {
         ? now.add(const Duration(days: 730))
         : null;
     app.history.add(StatusEvent(AppStatus.approved, now));
+    _notify(
+      app,
+      'Application approved',
+      'Your AICP membership application is approved. Choose your membership to continue.',
+    );
     auditLog.insert(
       0,
       AuditEntry(at: now, actor: actor, action: 'Approved', referenceNo: ref),
@@ -169,6 +229,11 @@ class MockRepository extends ChangeNotifier {
     app.rejectReason = reason;
     app.reviewedBy = actor;
     app.history.add(StatusEvent(AppStatus.rejected, now, reason));
+    _notify(
+      app,
+      'Application not approved',
+      'Reason: $reason. You can edit your details and apply again.',
+    );
     auditLog.insert(
       0,
       AuditEntry(

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_repository.dart';
+import '../../models/application.dart';
 import '../../l10n/strings.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
@@ -16,7 +17,7 @@ class PaymentResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final draft = context.watch<AppState>().draft;
+    final draft = _currentApplication(context);
     final app = context.watch<MockRepository>().findByRef(draft.referenceNo);
     final color = success ? AppColors.green : AppColors.red;
     return Scaffold(
@@ -94,4 +95,11 @@ class PaymentResultScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The member's own application, found by phone. Falls back to the draft when none exists yet.
+Application _currentApplication(BuildContext context) {
+  final phone = context.read<AppState>().phone ?? '';
+  return context.read<MockRepository>().findByPhone(phone) ??
+      context.read<AppState>().draft;
 }
