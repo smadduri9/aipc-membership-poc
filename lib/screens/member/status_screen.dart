@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +26,18 @@ class StatusScreen extends StatelessWidget {
       backgroundColor: AppColors.grouped,
       appBar: AppBar(
         title: Text(t(context, 'status_title')),
-        actions: const [NavActions()],
+        actions: [
+          IconButton(
+            tooltip: 'Notifications',
+            icon: Badge(
+              isLabelVisible: repo.unreadCount(phone) > 0,
+              label: Text('${repo.unreadCount(phone)}'),
+              child: const Icon(CupertinoIcons.bell),
+            ),
+            onPressed: () => context.push('/home/notifications'),
+          ),
+          const NavActions(),
+        ],
       ),
       body: SafeArea(
         child: ListView(
@@ -55,18 +67,34 @@ class StatusScreen extends StatelessWidget {
               child: StatusTimeline(app: app),
             ),
             const SizedBox(height: 16),
+            if (app.status == AppStatus.approved)
+              PrimaryButton(
+                label: 'Choose membership',
+                onPressed: () => context.push('/home/membership'),
+              ),
+            if (app.status == AppStatus.awaitingPayment)
+              PrimaryButton(
+                label: 'Review and pay',
+                onPressed: () => context.push('/home/review'),
+              ),
             if (app.status == AppStatus.paymentFailed)
               PrimaryButton(
                 label: t(context, 'retry_payment'),
                 onPressed: () => context.go('/home/payment'),
               ),
-            if (app.status == AppStatus.approved) ...[
-              const SizedBox(height: 8),
+            if (app.status == AppStatus.rejected)
+              PrimaryButton(
+                label: 'Edit and resubmit',
+                onPressed: () {
+                  context.read<AppState>().draft = app;
+                  context.go('/home/register?step=0');
+                },
+              ),
+            if (app.status == AppStatus.active)
               PrimaryButton(
                 label: t(context, 'view_card'),
                 onPressed: () => context.push('/home/status/card'),
               ),
-            ],
           ],
         ),
       ),

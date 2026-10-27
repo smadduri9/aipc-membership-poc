@@ -7,7 +7,10 @@ import 'screens/admin/admin_list_screen.dart';
 import 'screens/admin/admin_login_screen.dart';
 import 'screens/member/home_screen.dart';
 import 'screens/member/landing_screen.dart';
+import 'screens/member/fellowship_web_screen.dart';
 import 'screens/member/language_screen.dart';
+import 'screens/member/membership_screen.dart';
+import 'screens/member/notifications_screen.dart';
 import 'screens/member/membership_card_screen.dart';
 import 'screens/member/otp_screen.dart';
 import 'screens/member/payment_result_screen.dart';
@@ -64,6 +67,20 @@ GoRouter buildRouter() {
               initialStep:
                   int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
             ),
+          ),
+          GoRoute(
+            path: 'membership',
+            builder: (context, state) => const MembershipScreen(),
+            routes: [
+              GoRoute(
+                path: 'fellowship',
+                builder: (context, state) => const FellowshipWebScreen(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'notifications',
+            builder: (context, state) => const NotificationsScreen(),
           ),
           GoRoute(
             path: 'submitted',

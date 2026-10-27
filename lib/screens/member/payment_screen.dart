@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_repository.dart';
+import '../../models/application.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/format.dart';
@@ -24,7 +25,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool _processing = false;
 
   Future<void> _pay({required bool success}) async {
-    final draft = context.read<AppState>().draft;
+    final draft = _currentApplication(context);
     setState(() => _processing = true);
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
@@ -63,7 +64,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final draft = context.watch<AppState>().draft;
+    final draft = _currentApplication(context);
     final ready = _selected != null && !_processing;
     return Scaffold(
       backgroundColor: AppColors.sheet,
@@ -197,4 +198,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
   }
+}
+
+/// The member's own application, found by phone. Falls back to the draft when none exists yet.
+Application _currentApplication(BuildContext context) {
+  final phone = context.read<AppState>().phone ?? '';
+  return context.read<MockRepository>().findByPhone(phone) ??
+      context.read<AppState>().draft;
 }
