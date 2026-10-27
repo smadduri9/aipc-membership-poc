@@ -43,6 +43,13 @@ class StatusScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            if (repo.unreadCount(phone) > 0)
+              _NewNoticeBanner(
+                title: repo.notificationsFor(phone).first.title,
+                body: repo.notificationsFor(phone).first.body,
+                onTap: () => context.push('/home/notifications'),
+              ),
+            if (repo.unreadCount(phone) > 0) const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.fromLTRB(16, 8, 8, 16),
               decoration: BoxDecoration(
@@ -130,6 +137,61 @@ class _ReferenceRow extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+/// Top banner for the newest unread notice (approval or rejection) on the status screen.
+class _NewNoticeBanner extends StatelessWidget {
+  const _NewNoticeBanner({
+    required this.title,
+    required this.body,
+    required this.onTap,
+  });
+
+  final String title;
+  final String body;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.navy,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            const Icon(CupertinoIcons.bell_fill, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    body,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(CupertinoIcons.chevron_right, color: Colors.white),
+          ],
+        ),
+      ),
     );
   }
 }
