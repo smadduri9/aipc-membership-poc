@@ -40,7 +40,9 @@ class _SelfieCaptureState extends State<SelfieCapture> {
   Future<void> _startCamera() async {
     try {
       // The simulator can leave these calls pending forever, so give up after a short wait.
-      final cameras = await availableCameras().timeout(const Duration(seconds: 3));
+      final cameras = await availableCameras().timeout(
+        const Duration(seconds: 3),
+      );
       if (cameras.isEmpty) return;
       final front = cameras.firstWhere(
         (c) => c.lensDirection == CameraLensDirection.front,

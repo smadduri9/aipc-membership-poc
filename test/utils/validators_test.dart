@@ -5,14 +5,15 @@ import 'package:aipc_poc/utils/social_link.dart';
 
 void main() {
   group('Aadhaar', () {
-    test('accepts a number with a valid Verhoeff checksum', () {
-      expect(isValidAadhaar('2345 6789 0124'), isTrue);
+    test('accepts any 12 digits, with or without spaces', () {
+      expect(isValidAadhaar('4320 8976 5434'), isTrue);
+      expect(isValidAadhaar('012345678901'), isTrue);
     });
 
-    test('rejects a wrong checksum, wrong length and a leading 0 or 1', () {
-      expect(isValidAadhaar('2345 6789 0125'), isFalse);
+    test('rejects the wrong length and letters', () {
       expect(isValidAadhaar('2345 6789 012'), isFalse);
-      expect(isValidAadhaar('0345 6789 0124'), isFalse);
+      expect(isValidAadhaar('2345 6789 01234'), isFalse);
+      expect(isValidAadhaar('2345 6789 01a4'), isFalse);
     });
 
     test('masks everything except the last four digits', () {

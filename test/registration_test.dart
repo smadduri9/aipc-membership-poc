@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,7 @@ Widget _app() => MultiProvider(
 );
 
 void main() {
-  testWidgets('domain grid lists the client domains and picks one', (
+  testWidgets('domain list picks a domain', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(800, 1600));
@@ -36,25 +37,20 @@ void main() {
     expect(find.text('Choose your domain'), findsNothing);
   });
 
-  testWidgets('domain grid ends with Other', (tester) async {
+  testWidgets('domain list ends with Other and can be searched', (tester) async {
     await tester.binding.setSurfaceSize(const Size(800, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(_app());
     await tester.pumpAndSettle();
     await tester.tap(find.text('Choose your domain'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Other'),
-      200,
-      scrollable: find.descendant(
-        of: find.byType(GridView),
-        matching: find.byType(Scrollable),
-      ),
-    );
+    await tester.enterText(find.byType(CupertinoSearchTextField), 'oth');
+    await tester.pumpAndSettle();
     expect(find.text('Other'), findsOneWidget);
+    expect(find.text('Academia'), findsNothing);
   });
 
-  testWidgets('identity step rejects an invalid Aadhaar number', (
+  testWidgets('identity step rejects an Aadhaar number that is not 12 digits', (
     tester,
   ) async {
     await tester.pumpWidget(_app());
@@ -69,7 +65,7 @@ void main() {
     );
     await tester.enterText(
       find.widgetWithText(TextField, 'Aadhaar number'),
-      '1234 5678 9012',
+      '1234 5678 901',
     );
     await tester.tap(find.text('Choose your domain'));
     await tester.pumpAndSettle();

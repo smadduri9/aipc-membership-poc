@@ -368,9 +368,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _pickDomain() async {
-    final picked = await showModalBottomSheet<String>(
+    final picked = await showCupertinoModalPopup<String>(
       context: context,
-      isScrollControlled: true,
       builder: (_) => _DomainSheet(current: _draft.professionalDomain),
     );
     if (picked == null) return;
@@ -646,66 +645,69 @@ class _DomainTile extends StatelessWidget {
   }
 }
 
-/// Grid of the 24 domains plus Other, styled like the client's domain cards.
-class _DomainSheet extends StatelessWidget {
+/// Native grouped list of the 24 domains plus Other, with search and a checkmark on the current choice.
+class _DomainSheet extends StatefulWidget {
   const _DomainSheet({required this.current});
 
   final String current;
 
   @override
+  State<_DomainSheet> createState() => _DomainSheetState();
+}
+
+class _DomainSheetState extends State<_DomainSheet> {
+  String _query = '';
+
+  @override
   Widget build(BuildContext context) {
-    final items = [...professionalDomains, otherOption];
-    return SafeArea(
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).height * 0.8,
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Text(
-              t(context, 'professional_domain'),
-              style: AppText.sectionTitle,
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(12),
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 1.25,
-                children: [
-                  for (final item in items)
-                    InkWell(
-                      borderRadius: BorderRadius.circular(14),
-                      onTap: () => Navigator.of(context).pop(item),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF2F7FD),
-                          border: Border.all(
-                            color: item == current
-                                ? AppColors.navy
-                                : const Color(0xFFCFE0F5),
-                            width: item == current ? 2 : 1,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          item,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColors.navy,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+    final items = [
+      for (final d in [...professionalDomains, otherOption])
+        if (d.toLowerCase().contains(_query.toLowerCase())) d,
+    ];
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.85,
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(t(context, 'professional_domain')),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(t(context, 'cancel')),
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: CupertinoSearchTextField(
+                  onChanged: (v) => setState(() => _query = v),
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: ListView(
+                  children: [
+                    CupertinoListSection.insetGrouped(
+                      children: [
+                        for (final item in items)
+                          CupertinoListTile(
+                            title: Text(item),
+                            trailing: item == widget.current
+                                ? const Icon(
+                                    CupertinoIcons.checkmark_alt,
+                                    color: AppColors.navy,
+                                  )
+                                : null,
+                            onTap: () => Navigator.of(context).pop(item),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
