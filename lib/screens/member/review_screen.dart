@@ -57,7 +57,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       (t(context, 'voter_id'), d.voterId ?? '—'),
                       (
                         t(context, 'domain'),
-                        optionLabel(context.read<AppState>().lang, d.domain),
+                        optionLabel(
+                          context.read<AppState>().lang,
+                          d.professionalDomain,
+                        ),
                       ),
                     ],
                   ),

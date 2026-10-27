@@ -7,7 +7,7 @@ Application _draft() => Application()
   ..name = 'Test Member'
   ..phone = '9876543210'
   ..state = 'PB'
-  ..type = MembershipType.ordinary
+  ..type = MembershipType.aicpMember
   ..amount = 1000;
 
 void main() {
@@ -26,7 +26,7 @@ void main() {
     expect(await repo.verifyOtp('9876543210', '123456'), isTrue);
   });
 
-  test('approve sets validity two years ahead for ordinary members', () async {
+  test('approve sets validity two years ahead for AICP members', () async {
     final repo = MockRepository();
     final app = await repo.submit(_draft());
     await repo.fakePay(app.referenceNo, success: true);

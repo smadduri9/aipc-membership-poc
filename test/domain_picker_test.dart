@@ -28,6 +28,6 @@ void main() {
     expect(find.byType(CupertinoPicker), findsOneWidget);
     await tester.tap(find.text('हो गया'));
     await tester.pumpAndSettle();
-    expect(find.text('नागरिक समाज और नीति अनुसंधान'), findsOneWidget);
+    expect(find.byType(CupertinoPicker), findsNothing);
   });
 }

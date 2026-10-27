@@ -8,6 +8,7 @@ class AppState extends ChangeNotifier {
   String? phone;
   bool adminLoggedIn = false;
   String adminEmail = '';
+  AdminUser? admin;
   Application draft = Application();
 
   void setLang(String code) {
@@ -20,15 +21,17 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void adminSignIn(String email) {
+  void adminSignIn(AdminUser user) {
     adminLoggedIn = true;
-    adminEmail = email;
+    admin = user;
+    adminEmail = user.email;
     notifyListeners();
   }
 
   void adminSignOut() {
     adminLoggedIn = false;
     adminEmail = '';
+    admin = null;
     notifyListeners();
   }
 

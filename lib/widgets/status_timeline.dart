@@ -7,7 +7,7 @@ import '../utils/format.dart';
 
 enum _RowState { done, current, future, failed }
 
-/// Vertical timeline of an application's progress. Built from the application's status and history.
+/// Progress of an application: submitted, then reviewed, then payment and membership.
 class StatusTimeline extends StatelessWidget {
   const StatusTimeline({super.key, required this.app, this.english = false});
 
@@ -29,118 +29,103 @@ class StatusTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = app.status;
-    final paymentFailed = s == AppStatus.paymentFailed;
-    final paymentDone =
-        s == AppStatus.paymentVerified ||
-        s == AppStatus.approvalPending ||
-        s == AppStatus.approved ||
-        s == AppStatus.rejected;
-    final verifiedDone = paymentDone;
-    final awaitingDone = s == AppStatus.approved || s == AppStatus.rejected;
-
-    final rows = <_Row>[
-      _Row(
+    final rejected = s == AppStatus.rejected;
+    final reviewed =
+        s != AppStatus.submitted &&
+        s != AppStatus.underReview &&
+        s != AppStatus.draft;
+    final paid = s == AppStatus.active;
+    final rows = <(String, _RowState, DateTime?)>[
+      (
         _label(context, 'st_submitted'),
         s == AppStatus.draft ? _RowState.future : _RowState.done,
-        app.createdAt,
+        _timeOf(AppStatus.submitted),
       ),
-      _Row(
-        _label(context, 'st_payment'),
-        paymentFailed
-            ? _RowState.failed
-            : paymentDone
-            ? _RowState.done
-            : s == AppStatus.paymentPending
-            ? _RowState.current
-            : _RowState.future,
-        _timeOf(AppStatus.paymentVerified) ?? _timeOf(AppStatus.paymentFailed),
-      ),
-      _Row(
-        _label(context, 'st_verified'),
-        verifiedDone ? _RowState.done : _RowState.future,
-        _timeOf(AppStatus.paymentVerified),
-      ),
-      _Row(
+      (
         _label(context, 'st_awaiting'),
-        awaitingDone
-            ? _RowState.done
-            : s == AppStatus.approvalPending
-            ? _RowState.current
-            : _RowState.future,
-        _timeOf(AppStatus.approvalPending),
+        reviewed ? _RowState.done : _RowState.current,
+        _timeOf(AppStatus.approved) ?? _timeOf(AppStatus.rejected),
       ),
-      if (s == AppStatus.rejected)
-        _Row(
+      if (rejected)
+        (
           _label(context, 'st_rejected'),
           _RowState.failed,
           _timeOf(AppStatus.rejected),
-          note: app.rejectReason,
         )
-      else
-        _Row(
-          _label(context, 'st_approved'),
-          s == AppStatus.approved ? _RowState.done : _RowState.future,
-          _timeOf(AppStatus.approved),
+      else ...[
+        (
+          _label(context, 'st_payment'),
+          s == AppStatus.paymentFailed
+              ? _RowState.failed
+              : paid
+              ? _RowState.done
+              : reviewed
+              ? _RowState.current
+              : _RowState.future,
+          _timeOf(AppStatus.active) ?? _timeOf(AppStatus.paymentFailed),
         ),
+        (
+          _label(context, 'st_active'),
+          paid ? _RowState.done : _RowState.future,
+          _timeOf(AppStatus.active),
+        ),
+      ],
     ];
-
     return Column(
       children: [
         for (var i = 0; i < rows.length; i++)
-          _TimelineRow(row: rows[i], isLast: i == rows.length - 1),
+          _Row(
+            label: rows[i].$1,
+            state: rows[i].$2,
+            time: rows[i].$3,
+            last: i == rows.length - 1,
+          ),
       ],
     );
   }
 }
 
-class _Row {
-  const _Row(this.label, this.state, this.time, {this.note});
+class _Row extends StatelessWidget {
+  const _Row({
+    required this.label,
+    required this.state,
+    required this.time,
+    required this.last,
+  });
 
   final String label;
   final _RowState state;
   final DateTime? time;
-  final String? note;
-}
-
-class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({required this.row, required this.isLast});
-
-  final _Row row;
-  final bool isLast;
+  final bool last;
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (row.state) {
+    final color = switch (state) {
       _RowState.done => AppColors.green,
       _RowState.current => AppColors.saffron,
       _RowState.failed => AppColors.red,
-      _RowState.future => Colors.grey.shade400,
+      _RowState.future => AppColors.grey,
+    };
+    final icon = switch (state) {
+      _RowState.done => Icons.check_circle,
+      _RowState.current => Icons.radio_button_checked,
+      _RowState.failed => Icons.cancel,
+      _RowState.future => Icons.radio_button_unchecked,
     };
     return IntrinsicHeight(
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: 24,
-            child: Column(
-              children: [
-                Container(
-                  width: 14,
-                  height: 14,
-                  margin: const EdgeInsets.only(top: 4),
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
+          Column(
+            children: [
+              Icon(icon, color: color, size: 22),
+              if (!last)
+                Expanded(
+                  child: Container(width: 2, color: AppColors.separator),
                 ),
-                if (!isLast)
-                  Expanded(
-                    child: Container(width: 2, color: Colors.grey.shade300),
-                  ),
-              ],
-            ),
+            ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 18),
@@ -148,26 +133,19 @@ class _TimelineRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    row.label,
+                    label,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: row.state == _RowState.future
-                          ? AppColors.grey
-                          : Colors.black,
+                      color: state == _RowState.future ? AppColors.grey : null,
                     ),
                   ),
-                  if (row.time != null && row.state != _RowState.future)
+                  if (time != null)
                     Text(
-                      formatDateTime(row.time!),
+                      formatDateTime(time!),
                       style: const TextStyle(
-                        color: AppColors.grey,
                         fontSize: 12,
+                        color: AppColors.grey,
                       ),
-                    ),
-                  if (row.note != null && row.note!.isNotEmpty)
-                    Text(
-                      row.note!,
-                      style: const TextStyle(color: AppColors.red),
                     ),
                 ],
               ),

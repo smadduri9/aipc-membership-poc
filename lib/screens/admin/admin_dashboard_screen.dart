@@ -18,15 +18,12 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = context.watch<MockRepository>();
     final all = repo.search();
-    final awaiting = all
-        .where((a) => a.status == AppStatus.approvalPending)
-        .length;
+    final awaiting = all.where((a) => a.status == AppStatus.submitted).length;
     final approved = all.where((a) => a.status == AppStatus.approved).length;
     final collected = all
         .where(
           (a) =>
-              a.status == AppStatus.approvalPending ||
-              a.status == AppStatus.approved,
+              a.status == AppStatus.submitted || a.status == AppStatus.approved,
         )
         .fold<int>(0, (sum, a) => sum + a.amount);
     final byState = {

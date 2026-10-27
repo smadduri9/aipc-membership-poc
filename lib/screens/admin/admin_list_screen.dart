@@ -13,11 +13,11 @@ import '../../widgets/status_chip.dart';
 
 const _statusFilters = <(String, AppStatus?)>[
   ('All', null),
-  ('Awaiting approval', AppStatus.approvalPending),
+  ('Awaiting approval', AppStatus.submitted),
   ('Approved', AppStatus.approved),
   ('Rejected', AppStatus.rejected),
   ('Payment failed', AppStatus.paymentFailed),
-  ('Payment pending', AppStatus.paymentPending),
+  ('Payment pending', AppStatus.submitted),
 ];
 
 class AdminListScreen extends StatefulWidget {

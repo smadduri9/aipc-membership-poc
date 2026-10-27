@@ -31,8 +31,7 @@ class AdminDetailScreen extends StatelessWidget {
       backgroundColor: AppColors.grouped,
       appBar: AppBar(title: Text(referenceNo)),
       // Primary actions stay pinned above the home indicator instead of scrolling off screen.
-      bottomNavigationBar:
-          app != null && app.status == AppStatus.approvalPending
+      bottomNavigationBar: app != null && app.status == AppStatus.submitted
           ? Container(
               color: Colors.white,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -76,7 +75,7 @@ class AdminDetailScreen extends StatelessWidget {
                       children: [
                         _Field('Phone', app.phone),
                         _Field('Voter ID', app.voterId ?? '—'),
-                        _Field('Domain', app.domain),
+                        _Field('Domain', app.professionalDomain),
                         _Field('State', stateNames[app.state] ?? ''),
                         _Field('Parliamentary', app.parliamentary),
                         _Field('Assembly', app.assembly),
