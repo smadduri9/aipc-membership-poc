@@ -17,6 +17,7 @@ import 'screens/member/register_screen.dart';
 import 'screens/member/review_screen.dart';
 import 'screens/member/role_screen.dart';
 import 'screens/member/status_screen.dart';
+import 'screens/member/submitted_screen.dart';
 
 /// Member screens are nested under /home and admin screens under /admin/dashboard, so `context.go`
 /// always leaves a parent on the stack. That keeps the iOS back button and swipe-back working
@@ -62,8 +63,12 @@ GoRouter buildRouter() {
             builder: (context, state) => RegisterScreen(
               initialStep:
                   int.tryParse(state.uri.queryParameters['step'] ?? '') ?? 0,
-              editing: state.uri.queryParameters['edit'] == '1',
             ),
+          ),
+          GoRoute(
+            path: 'submitted',
+            builder: (context, state) =>
+                SubmittedScreen(referenceNo: state.extra as String? ?? ''),
           ),
           GoRoute(
             path: 'review',

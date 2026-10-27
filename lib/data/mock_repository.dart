@@ -81,6 +81,14 @@ class MockRepository extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Demo stand-in for reading the address from Aadhaar (e-KYC). Same number, same address.
+  ({String state, String district, String pin, String cityVillage})
+  lookupAadhaarAddress(String aadhaar) {
+    final digits = aadhaar.replaceAll(RegExp(r'\D'), '');
+    final last = digits.isEmpty ? 0 : int.parse(digits[digits.length - 1]);
+    return demoAadhaarAddresses[last];
+  }
+
   /// Returns the account for these credentials, or null. Every demo password is demo1234.
   Future<AdminUser?> adminLogin(String email, String password) async {
     await _wait();
