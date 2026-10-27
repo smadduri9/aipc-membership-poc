@@ -12,6 +12,7 @@ void main() {
     '/home/status',
     '/home/status/card',
     '/home/payment',
+    '/language/role',
     '/language/phone',
     '/language/phone/otp',
     '/admin/dashboard/list',
@@ -29,9 +30,6 @@ void main() {
           child: MaterialApp.router(routerConfig: router),
         ),
       );
-      await tester.pump(
-        const Duration(seconds: 2),
-      ); // let the splash timer fire
       router.go(location);
       await tester.pump(const Duration(milliseconds: 500));
       expect(router.canPop(), isTrue);

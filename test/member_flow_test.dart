@@ -1,14 +1,28 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:aipc_poc/main.dart';
+import 'package:aipc_poc/data/mock_repository.dart';
+import 'package:aipc_poc/router.dart';
+import 'package:aipc_poc/state/app_state.dart';
 
 void main() {
   testWidgets('member can log in with demo credentials and reach home', (
     tester,
   ) async {
-    await tester.pumpWidget(const AipcApp());
-    await tester.pump(const Duration(milliseconds: 1600));
+    // Landing is covered in landing_test.dart; this flow starts at language.
+    final router = buildRouter()..go('/language');
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => MockRepository()),
+          ChangeNotifierProvider(create: (_) => AppState()),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
 
     // Language: Hindi is default; switch to English and back.
     expect(find.text('अपनी भाषा चुनें'), findsOneWidget);
@@ -18,6 +32,10 @@ void main() {
     await tester.tap(find.text('हिन्दी'));
     await tester.pump();
     await tester.tap(find.text('आगे बढ़ें'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Role: choose member.
+    await tester.tap(find.text('सदस्य'));
     await tester.pump(const Duration(milliseconds: 300));
 
     // Phone: send button stays disabled until number and consent are given.

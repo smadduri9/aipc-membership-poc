@@ -71,7 +71,7 @@ class LanguageScreen extends StatelessWidget {
               const Spacer(),
               PrimaryButton(
                 label: t(context, 'continue'),
-                onPressed: () => context.push('/language/phone'),
+                onPressed: () => context.push('/language/role'),
               ),
             ],
           ),
