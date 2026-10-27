@@ -85,7 +85,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 ),
               const SizedBox(height: 8),
               const Text(
-                'Demo: admin@aipc.demo / demo1234',
+                'Demo: master@aipc.demo or pb@aipc.demo / demo1234',
                 style: TextStyle(color: AppColors.grey),
               ),
               const SizedBox(height: 16),

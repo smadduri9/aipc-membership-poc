@@ -26,7 +26,11 @@ class AdminDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repo = context.watch<MockRepository>();
-    final app = repo.findByRef(referenceNo);
+    final viewer = context.watch<AppState>().admin;
+    final found = repo.findByRef(referenceNo);
+    final inScope =
+        viewer == null || viewer.isMaster || found?.state == viewer.stateCode;
+    final app = inScope ? found : null;
     return Scaffold(
       backgroundColor: AppColors.grouped,
       appBar: AppBar(title: Text(referenceNo)),

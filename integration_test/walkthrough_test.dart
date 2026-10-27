@@ -131,7 +131,7 @@ void main() {
     await wait(tester);
     await tester.enterText(
       find.widgetWithText(TextField, 'Email'),
-      'admin@aipc.demo',
+      'master@aipc.demo',
     );
     await tester.enterText(
       find.widgetWithText(TextField, 'Password'),

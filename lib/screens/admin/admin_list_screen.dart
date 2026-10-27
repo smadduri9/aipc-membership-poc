@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../data/mock_data.dart';
 import '../../data/mock_repository.dart';
 import '../../models/application.dart';
+import '../../state/app_state.dart';
 import '../../utils/format.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/status_chip.dart';
@@ -74,17 +75,19 @@ class _AdminListScreenState extends State<AdminListScreen> {
   @override
   Widget build(BuildContext context) {
     final repo = context.watch<MockRepository>();
+    final viewer = context.watch<AppState>().admin;
     final results = repo.search(
       state: _stateCode,
       status: _status,
       query: _query.text,
+      viewer: viewer,
     );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Applications'),
         actions: [
           TextButton(
-            onPressed: () => _showCsv(context, repo.exportCsv()),
+            onPressed: () => _showCsv(context, repo.exportCsv(viewer: viewer)),
             child: const Text('Export CSV'),
           ),
         ],
