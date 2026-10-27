@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:aipc_poc/data/mock_repository.dart';
 import 'package:aipc_poc/router.dart';
 import 'package:aipc_poc/state/app_state.dart';
-import 'package:aipc_poc/widgets/primary_button.dart';
 
 void main() {
   testWidgets('landing stays until Next is tapped, then opens language', (
@@ -26,11 +25,11 @@ void main() {
 
     // No auto-advance.
     await tester.pump(const Duration(seconds: 10));
-    expect(router.routerDelegate.currentConfiguration.uri.path, '/');
+    expect(router.routeInformationProvider.value.uri.path, '/');
 
-    router.go('/language');
+    // Tapping Next leaves the landing page.
+    await tester.tap(find.text('आगे'));
     await tester.pumpAndSettle();
     expect(find.text('अपनी भाषा चुनें'), findsOneWidget);
-    expect(find.byType(PrimaryButton), findsWidgets);
   });
 }

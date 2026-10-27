@@ -305,6 +305,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               Expanded(
                 child: ListView(
+                  // A new key per step starts each step at the top instead of keeping the previous scroll position.
+                  key: ValueKey(_step),
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   children: switch (_step) {
                     0 => _identity(),
