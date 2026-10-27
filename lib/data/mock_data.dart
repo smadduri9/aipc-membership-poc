@@ -73,6 +73,20 @@ class _SeedRow {
 }
 
 const List<_SeedRow> _rows = [
+  // Demo member from the spec: already approved, so the payment step can be shown directly.
+  _SeedRow(
+    'Demo Approved',
+    '9876500000',
+    'PB',
+    'Ludhiana',
+    'Ludhiana',
+    'Academia',
+    MembershipType.aicpMember,
+    1000,
+    AppStatus.approved,
+    3,
+    null,
+  ),
   _SeedRow(
     'Harpreet Kaur',
     '9814012345',
