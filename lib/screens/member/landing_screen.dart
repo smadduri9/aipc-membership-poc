@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../l10n/strings.dart';
 import '../../theme.dart';
+import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
 /// First screen of the app. Introduces AICP and waits for the user to tap Next.
@@ -86,6 +87,16 @@ class _LandingScreenState extends State<LandingScreen> {
                     AppColors.sheet,
                   ],
                 ),
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 0,
+            left: 16,
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: LanguagePill(),
               ),
             ),
           ),
