@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -141,6 +142,9 @@ class _SelfieCaptureState extends State<SelfieCapture> {
                     size: 120,
                     color: AppColors.navy,
                   )
+                // In a browser the camera returns a blob URL, not a file path.
+                : kIsWeb
+                ? Image.network(widget.value!, fit: BoxFit.cover)
                 : Image.file(File(widget.value!), fit: BoxFit.cover),
           ),
         ),
