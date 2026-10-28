@@ -6,11 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_repository.dart';
+import '../../widgets/demo_badge.dart';
 import '../../l10n/strings.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/flag_watermark.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -28,14 +30,30 @@ class _OtpScreenState extends State<OtpScreen> {
   bool _verifying = false;
   bool _wrongCode = false;
 
+  late final VoidCallback _unregisterDemo;
+
   @override
   void initState() {
     super.initState();
     _startTimer();
+    _unregisterDemo = DemoFill.register(_fillDemoCode);
+  }
+
+  /// Demo badge: types the demo code and verifies it, as if the SMS arrived.
+  void _fillDemoCode() {
+    if (_verifying) return;
+    setState(() {
+      for (var i = 0; i < _length; i++) {
+        _controllers[i].text = '${i + 1}';
+      }
+      _wrongCode = false;
+    });
+    _verify();
   }
 
   @override
   void dispose() {
+    _unregisterDemo();
     _timer?.cancel();
     for (final c in _controllers) {
       c.dispose();
@@ -89,7 +107,16 @@ class _OtpScreenState extends State<OtpScreen> {
     if (!mounted) return;
     setState(() => _verifying = false);
     if (ok) {
-      context.go('/home');
+      // First sign-in goes straight to the application form; a returning member sees their home.
+      final state = context.read<AppState>();
+      final phone = state.phone ?? '';
+      if (context.read<MockRepository>().findByPhone(phone) == null) {
+        state.resetDraft();
+        state.draft.phone = phone;
+        context.go('/home/register?step=0');
+      } else {
+        context.go('/home');
+      }
     } else {
       setState(() => _wrongCode = true);
       for (final c in _controllers) {
@@ -102,78 +129,76 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     final phone = context.watch<AppState>().phone ?? '';
-    return Scaffold(
-      appBar: AppBar(actions: const [NavActions()]),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                t(context, 'enter_otp'),
-                style: AppText.largeTitle.copyWith(fontSize: 24),
-              ),
-              Text(
-                '+91 $phone',
-                style: const TextStyle(fontSize: 16, color: AppColors.grey),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(_length, (i) {
-                  return SizedBox(
-                    width: 44,
-                    child: CupertinoTextField(
-                      controller: _controllers[i],
-                      focusNode: _focusNodes[i],
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      autofillHints: const [AutofillHints.oneTimeCode],
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(
-                        color: AppColors.grouped,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      onChanged: (v) => _onDigitChanged(i, v),
-                    ),
-                  );
-                }),
-              ),
-              if (_wrongCode)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    t(context, 'err_otp'),
-                    style: const TextStyle(color: AppColors.red),
-                  ),
+    return FlagWatermark(
+      child: Scaffold(
+        appBar: AppBar(actions: const [NavActions()]),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  t(context, 'enter_otp'),
+                  style: AppText.largeTitle.copyWith(fontSize: 24),
                 ),
-              const SizedBox(height: 12),
-              Text(
-                t(context, 'demo_otp_hint'),
-                style: const TextStyle(color: AppColors.grey),
-              ),
-              const SizedBox(height: 8),
-              _secondsLeft > 0
-                  ? Text(
-                      '${t(context, 'resend_in')} $_secondsLeft s',
-                      style: const TextStyle(color: AppColors.grey),
-                    )
-                  : TextButton(
-                      onPressed: _startTimer,
-                      child: Text(t(context, 'resend')),
+                Text(
+                  '+91 $phone',
+                  style: const TextStyle(fontSize: 16, color: AppColors.grey),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(_length, (i) {
+                    return SizedBox(
+                      width: 44,
+                      child: CupertinoTextField(
+                        controller: _controllers[i],
+                        focusNode: _focusNodes[i],
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.center,
+                        autofillHints: const [AutofillHints.oneTimeCode],
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.grouped,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onChanged: (v) => _onDigitChanged(i, v),
+                      ),
+                    );
+                  }),
+                ),
+                if (_wrongCode)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      t(context, 'err_otp'),
+                      style: const TextStyle(color: AppColors.red),
                     ),
-              const Spacer(),
-              PrimaryButton(
-                label: t(context, 'verify'),
-                loading: _verifying,
-                onPressed: _code.length == _length ? _verify : null,
-              ),
-            ],
+                  ),
+                const SizedBox(height: 12),
+                const SizedBox(height: 8),
+                _secondsLeft > 0
+                    ? Text(
+                        '${t(context, 'resend_in')} $_secondsLeft s',
+                        style: const TextStyle(color: AppColors.grey),
+                      )
+                    : TextButton(
+                        onPressed: _startTimer,
+                        child: Text(t(context, 'resend')),
+                      ),
+                const Spacer(),
+                PrimaryButton(
+                  label: t(context, 'verify'),
+                  loading: _verifying,
+                  onPressed: _code.length == _length ? _verify : null,
+                ),
+              ],
+            ),
           ),
         ),
       ),

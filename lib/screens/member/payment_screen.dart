@@ -10,7 +10,7 @@ import '../../theme.dart';
 import '../../utils/format.dart';
 import '../../widgets/nav_actions.dart';
 
-/// Fake Razorpay-style checkout. The sheet is English only, as a real gateway would be.
+/// Fake checkout sheet. English only, as a real payment gateway would be.
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
 

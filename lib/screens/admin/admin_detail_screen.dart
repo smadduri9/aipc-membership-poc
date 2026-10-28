@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,12 +11,6 @@ import '../../utils/format.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/status_chip.dart';
 import '../../widgets/status_timeline.dart';
-
-const _rejectReasons = [
-  'Incomplete details',
-  'Duplicate application',
-  'Not eligible',
-];
 
 class AdminDetailScreen extends StatelessWidget {
   const AdminDetailScreen({super.key, required this.referenceNo});
@@ -78,20 +72,42 @@ class AdminDetailScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         _Field('Phone', app.phone),
-                        _Field('Domain', app.professionalDomain),
-                        _Field('State', stateNames[app.state] ?? ''),
-                        _Field('Parliamentary', app.parliamentary),
-                        _Field('Assembly', app.assembly),
-                        _Field('PIN code', app.pinCode),
+                        _Field('Aadhaar', app.aadhaarMasked),
                         _Field(
-                          'Type',
-                          app.type == MembershipType.patron
-                              ? 'Patron'
-                              : 'Ordinary',
+                          'Domain',
+                          app.professionalDomainOther ?? app.professionalDomain,
                         ),
-                        _Field('Amount', formatRupees(app.amount)),
-                        _Field('Payment ID', app.paymentId ?? '—'),
-                        _Field('Created', formatDateTime(app.createdAt)),
+                        _Field(
+                          'Place',
+                          [
+                            app.cityVillage,
+                            app.districtOther ?? app.district,
+                            stateNames[app.state] ?? app.stateOther ?? '',
+                          ].where((e) => e.isNotEmpty).join(', '),
+                        ),
+                        _Field('PIN code', app.pinCode),
+                        if (app.parliamentary.isNotEmpty)
+                          _Field('Parliamentary', app.parliamentary),
+                        if (app.assembly.isNotEmpty)
+                          _Field('Assembly', app.assembly),
+                        if (app.instagramUrl != null)
+                          _Field('Instagram', app.instagramUrl!),
+                        if (app.linkedinUrl != null)
+                          _Field('LinkedIn', app.linkedinUrl!),
+                        if (app.facebookUrl != null)
+                          _Field('Facebook', app.facebookUrl!),
+                        // Plan and payment only matter once the member has chosen a plan.
+                        if (app.status != AppStatus.submitted) ...[
+                          _Field(
+                            'Plan',
+                            app.type == MembershipType.patron
+                                ? 'Patron'
+                                : 'AICP Member',
+                          ),
+                          _Field('Amount', formatRupees(app.amount)),
+                          _Field('Payment ID', app.paymentId ?? '—'),
+                        ],
+                        _Field('Applied', formatDateTime(app.createdAt)),
                       ],
                     ),
                   ),
@@ -135,110 +151,45 @@ class _Field extends StatelessWidget {
   }
 }
 
+const _declineReasons = [
+  'Photo unclear',
+  'Wrong state',
+  'Link not working',
+  'Other',
+];
+
 class _Actions extends StatelessWidget {
   const _Actions({required this.app});
 
   final Application app;
 
-  void _toast(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  Future<void> _confirmApprove(BuildContext context) async {
-    final confirmed = await showCupertinoDialog<bool>(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        title: const Text('Approve membership?'),
-        content: Text(app.referenceNo),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Cancel'),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Approve'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
+  Future<void> _approve(BuildContext context) async {
     final actor = context.read<AppState>().adminEmail;
+    final state = context.read<AppState>();
     await context.read<MockRepository>().approve(app.referenceNo, actor);
-    if (context.mounted) _toast(context, 'Approved');
+    state.markSeen([app.referenceNo]);
+    if (context.mounted) {
+      context.go('/admin/dashboard/approved/${app.referenceNo}');
+    }
   }
 
-  Future<void> _reject(BuildContext context, String reason) async {
+  Future<void> _decline(BuildContext context) async {
+    final reason = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (_) => const _DeclineSheet(),
+    );
+    if (reason == null || !context.mounted) return;
     final actor = context.read<AppState>().adminEmail;
     await context.read<MockRepository>().reject(app.referenceNo, actor, reason);
-    if (context.mounted) _toast(context, 'Rejected');
-  }
-
-  Future<void> _chooseReject(BuildContext context) async {
-    await showCupertinoModalPopup<void>(
-      context: context,
-      builder: (sheetContext) => CupertinoActionSheet(
-        title: const Text('Reason for rejection'),
-        actions: [
-          for (final reason in _rejectReasons)
-            CupertinoActionSheetAction(
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.of(sheetContext).pop();
-                _reject(context, reason);
-              },
-              child: Text(reason),
-            ),
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () {
-              Navigator.of(sheetContext).pop();
-              _rejectWithText(context);
-            },
-            child: const Text('Other'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.of(sheetContext).pop(),
-          child: const Text('Cancel'),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _rejectWithText(BuildContext context) async {
-    final controller = TextEditingController();
-    final reason = await showCupertinoDialog<String>(
-      context: context,
-      builder: (dialogContext) => CupertinoAlertDialog(
-        title: const Text('Reason'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: CupertinoTextField(
-            controller: controller,
-            placeholder: 'Enter a reason',
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () {
-              final text = controller.text.trim();
-              if (text.isNotEmpty) Navigator.of(dialogContext).pop(text);
-            },
-            child: const Text('Reject'),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (reason != null && context.mounted) await _reject(context, reason);
+    if (!context.mounted) return;
+    context.read<AppState>().markSeen([app.referenceNo]);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${app.firstName} was declined')));
+    context.go('/admin/dashboard');
   }
 
   @override
@@ -246,27 +197,141 @@ class _Actions extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.green,
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.red,
               minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-            onPressed: () => _confirmApprove(context),
-            child: const Text('Approve'),
+            onPressed: () => _decline(context),
+            child: const Text('Decline'),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
+          flex: 2,
           child: FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.red,
+              backgroundColor: AppColors.navy,
               minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-            onPressed: () => _chooseReject(context),
-            child: const Text('Reject'),
+            onPressed: () => _approve(context),
+            child: const Text(
+              'Approve',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DeclineSheet extends StatefulWidget {
+  const _DeclineSheet();
+
+  @override
+  State<_DeclineSheet> createState() => _DeclineSheetState();
+}
+
+class _DeclineSheetState extends State<_DeclineSheet> {
+  String? _reason;
+  final _other = TextEditingController();
+
+  @override
+  void dispose() {
+    _other.dispose();
+    super.dispose();
+  }
+
+  String? get _final {
+    if (_reason == null) return null;
+    if (_reason == 'Other') {
+      final text = _other.text.trim();
+      return text.isEmpty ? null : text;
+    }
+    return _reason;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        16,
+        20,
+        MediaQuery.viewInsetsOf(context).bottom + 20,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Decline application?',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'They can fix this and apply again.',
+              style: TextStyle(color: AppColors.grey),
+            ),
+            const SizedBox(height: 14),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final r in _declineReasons)
+                  ChoiceChip(
+                    label: Text(r),
+                    selected: _reason == r,
+                    onSelected: (_) => setState(() => _reason = r),
+                  ),
+              ],
+            ),
+            if (_reason == 'Other') ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: _other,
+                autofocus: true,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  hintText: 'Reason for declining',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.red,
+                minimumSize: const Size.fromHeight(50),
+              ),
+              onPressed: _final == null
+                  ? null
+                  : () => Navigator.of(context).pop(_final),
+              child: const Text('Decline'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

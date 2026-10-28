@@ -10,6 +10,11 @@ import '../../theme.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 
+import 'package:flutter/cupertino.dart';
+
+import '../../utils/format.dart';
+import '../../utils/pdf_documents.dart';
+
 class PaymentResultScreen extends StatelessWidget {
   const PaymentResultScreen({super.key, required this.success});
 
@@ -60,12 +65,26 @@ class PaymentResultScreen extends StatelessWidget {
                     '${t(context, 'payment_id')}: ${app!.paymentId}',
                     textAlign: TextAlign.center,
                   ),
-                const SizedBox(height: 12),
-                Text(
-                  t(context, 'awaiting_approval_msg'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.grey),
-                ),
+                if (app != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    '${t(context, 'amount')}: ${formatRupees(app.amount)}',
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    formatDate(DateTime.now()),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: OutlinedButton.icon(
+                      icon: const Icon(CupertinoIcons.arrow_down_doc),
+                      label: Text(t(context, 'download_receipt')),
+                      onPressed: () => shareReceipt(app),
+                    ),
+                  ),
+                ],
               ] else
                 Text(
                   t(context, 'no_money_deducted'),
@@ -75,8 +94,8 @@ class PaymentResultScreen extends StatelessWidget {
               const Spacer(),
               if (success)
                 PrimaryButton(
-                  label: t(context, 'track_status'),
-                  onPressed: () => context.go('/home/status'),
+                  label: t(context, 'back'),
+                  onPressed: () => context.go('/home'),
                 )
               else ...[
                 PrimaryButton(

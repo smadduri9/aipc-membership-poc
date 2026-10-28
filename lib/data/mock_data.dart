@@ -246,7 +246,7 @@ List<Application> seedApplications() {
     final parts = row.name.split(' ');
     final app = Application()
       ..referenceNo =
-          'AIPC-${row.state}-26-${number.toString().padLeft(6, '0')}'
+          'AICP-${row.state}-26-${number.toString().padLeft(6, '0')}'
       ..firstName = parts.first
       ..lastName = parts.sublist(1).join(' ')
       ..phone = row.phone

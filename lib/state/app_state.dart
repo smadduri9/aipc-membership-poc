@@ -9,6 +9,12 @@ class AppState extends ChangeNotifier {
   bool adminLoggedIn = false;
   String adminEmail = '';
   AdminUser? admin;
+
+  /// When the admin signed in. Applications that arrive after this count as "new" for them.
+  DateTime adminSignedInAt = DateTime.now();
+
+  /// Applications the admin has already looked at in the review list.
+  final Set<String> seenRefs = {};
   Application draft = Application();
 
   void setLang(String code) {
@@ -23,8 +29,15 @@ class AppState extends ChangeNotifier {
 
   void adminSignIn(AdminUser user) {
     adminLoggedIn = true;
+    adminSignedInAt = DateTime.now();
+    seenRefs.clear();
     admin = user;
     adminEmail = user.email;
+    notifyListeners();
+  }
+
+  void markSeen(Iterable<String> refs) {
+    seenRefs.addAll(refs);
     notifyListeners();
   }
 

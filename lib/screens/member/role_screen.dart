@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../l10n/strings.dart';
 import '../../theme.dart';
 import '../../widgets/nav_actions.dart';
+import '../../widgets/flag_watermark.dart';
 
 /// Asks whether the person is a member applying or an administrator.
 class RoleScreen extends StatelessWidget {
@@ -12,30 +13,32 @@ class RoleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(actions: const [NavActions()]),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(t(context, 'role_title'), style: AppText.largeTitle),
-              const SizedBox(height: 24),
-              _RoleCard(
-                icon: CupertinoIcons.person_crop_circle,
-                title: t(context, 'role_member_title'),
-                subtitle: t(context, 'role_member_sub'),
-                onTap: () => context.push('/phone'),
-              ),
-              const SizedBox(height: 16),
-              _RoleCard(
-                icon: CupertinoIcons.shield_lefthalf_fill,
-                title: t(context, 'role_admin_title'),
-                subtitle: t(context, 'role_admin_sub'),
-                onTap: () => context.push('/admin'),
-              ),
-            ],
+    return FlagWatermark(
+      child: Scaffold(
+        appBar: AppBar(actions: const [NavActions()]),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(t(context, 'role_title'), style: AppText.largeTitle),
+                const SizedBox(height: 24),
+                _RoleCard(
+                  icon: CupertinoIcons.person_crop_circle,
+                  title: t(context, 'role_member_title'),
+                  subtitle: t(context, 'role_member_sub'),
+                  onTap: () => context.push('/phone'),
+                ),
+                const SizedBox(height: 16),
+                _RoleCard(
+                  icon: CupertinoIcons.shield_lefthalf_fill,
+                  title: t(context, 'role_admin_title'),
+                  subtitle: t(context, 'role_admin_sub'),
+                  onTap: () => context.push('/admin'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

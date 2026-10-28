@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +21,47 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
   final _password = TextEditingController();
   bool _loading = false;
   bool _failed = false;
+  late final VoidCallback _unregisterDemo;
+
+  @override
+  void initState() {
+    super.initState();
+    _unregisterDemo = DemoFill.register(_pickDemoAccount);
+  }
+
+  /// Demo badge: pick a role, and the login is filled and submitted.
+  Future<void> _pickDemoAccount() async {
+    final email = await showCupertinoModalPopup<String>(
+      context: context,
+      builder: (sheetContext) => CupertinoActionSheet(
+        title: const Text('Sign in as'),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(sheetContext).pop('pb@aipc.demo'),
+            child: const Text('State representative · Punjab'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(sheetContext).pop('master@aipc.demo'),
+            child: const Text('Master · all states and UTs'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.of(sheetContext).pop(),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+    if (email == null || !mounted) return;
+    setState(() {
+      _email.text = email;
+      _password.text = 'demo1234';
+    });
+    await _login();
+  }
 
   @override
   void dispose() {
+    _unregisterDemo();
     _email.dispose();
     _password.dispose();
     super.dispose();

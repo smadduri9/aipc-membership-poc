@@ -8,6 +8,7 @@ import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/flag_watermark.dart';
 
 const _languages = [
   ('hi', 'हिन्दी'),
@@ -22,58 +23,60 @@ class LanguageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    return Scaffold(
-      appBar: AppBar(actions: const [NavActions(showLanguage: false)]),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(t(context, 'choose_language'), style: AppText.largeTitle),
-              const SizedBox(height: 24),
-              for (final (code, label) in _languages)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => context.read<AppState>().setLang(code),
-                    child: Container(
-                      height: 64,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: state.lang == code
-                              ? AppColors.navy
-                              : Colors.grey.shade300,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              label,
-                              style: const TextStyle(fontSize: 20),
-                            ),
+    return FlagWatermark(
+      child: Scaffold(
+        appBar: AppBar(actions: const [NavActions(showLanguage: false)]),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(t(context, 'choose_language'), style: AppText.largeTitle),
+                const SizedBox(height: 24),
+                for (final (code, label) in _languages)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => context.read<AppState>().setLang(code),
+                      child: Container(
+                        height: 64,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: state.lang == code
+                                ? AppColors.navy
+                                : Colors.grey.shade300,
+                            width: 2,
                           ),
-                          if (state.lang == code)
-                            const Icon(
-                              CupertinoIcons.checkmark_alt,
-                              color: AppColors.navy,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: const TextStyle(fontSize: 20),
+                              ),
                             ),
-                        ],
+                            if (state.lang == code)
+                              const Icon(
+                                CupertinoIcons.checkmark_alt,
+                                color: AppColors.navy,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                const Spacer(),
+                PrimaryButton(
+                  label: t(context, 'continue'),
+                  onPressed: () => context.push('/language/role'),
                 ),
-              const Spacer(),
-              PrimaryButton(
-                label: t(context, 'continue'),
-                onPressed: () => context.push('/language/role'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

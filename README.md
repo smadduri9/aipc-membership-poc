@@ -1,10 +1,10 @@
-# AIPC Membership App — Proof of Concept
+# AICP Membership App — Proof of Concept
 
 > This is a proof of concept for demonstration purposes only. It uses sample data, a simulated login and a simulated payment screen. It is not production software and does not store or transmit any personal data.
 
 ## Overview
 
-This proof of concept shows the membership journey for the All India Professionals' Congress (AIPC) on iPhone. A member sees an introduction, chooses a language, verifies a mobile number and completes a three-step application. A state representative reviews applications for their state. Once approved, the member chooses a membership, pays through a simulated payment screen and receives a membership card. Members receive in-app notices. The master login sees all states.
+This proof of concept shows the membership journey for the All India Congress Party (AICP) on iPhone. A member sees an introduction, chooses a language, verifies a mobile number and completes a three-step application. A state representative reviews applications for their state. Once approved, the member chooses a membership, pays through a simulated payment screen and receives a membership card. Members receive in-app notices. The master login sees all states.
 
 ## What is simulated
 
