@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -21,6 +22,8 @@ class _FellowshipWebScreenState extends State<FellowshipWebScreen> {
   @override
   void initState() {
     super.initState();
+    // Browsers have no embedded web view; the build shows the link instead.
+    if (kIsWeb) return;
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -56,27 +59,44 @@ class _FellowshipWebScreenState extends State<FellowshipWebScreen> {
           TextButton(onPressed: () => context.pop(), child: const Text('Done')),
         ],
       ),
-      body: Stack(
-        children: [
-          if (!_failed) WebViewWidget(controller: _controller),
-          if (_loading && !_failed)
-            const Center(child: CupertinoActivityIndicator()),
-          if (_failed)
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('The page could not be opened.'),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: _retry,
-                    child: const Text('Try again'),
-                  ),
-                ],
+      body: kIsWeb
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Open this page in a new browser tab:'),
+                    SizedBox(height: 12),
+                    SelectableText(
+                      kManmohanSinghUrl,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
+            )
+          : Stack(
+              children: [
+                if (!_failed) WebViewWidget(controller: _controller),
+                if (_loading && !_failed)
+                  const Center(child: CupertinoActivityIndicator()),
+                if (_failed)
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('The page could not be opened.'),
+                        const SizedBox(height: 12),
+                        FilledButton(
+                          onPressed: _retry,
+                          child: const Text('Try again'),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

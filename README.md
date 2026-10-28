@@ -2,6 +2,20 @@
 
 > This is a proof of concept for demonstration purposes only. It uses sample data, a simulated login and a simulated payment screen. It is not production software and does not store or transmit any personal data.
 
+## Quick start (plug and play)
+
+Clone the repository and run one command. Works on macOS, Windows and Linux with Google Chrome.
+
+```bash
+git clone https://github.com/smadduri9/aipc-membership-poc.git
+cd aipc-membership-poc
+./scripts/start.sh
+```
+
+The app opens in Chrome. Use the demo access below to sign in.
+
+Using Claude Code? Open the folder and say "start this app". The steps Claude follows are in `CLAUDE.md`.
+
 ## Overview
 
 This proof of concept shows the membership journey for the All India Congress Party (AICP) on iPhone. A member sees an introduction, chooses a language, verifies a mobile number and completes a three-step application. A state representative reviews applications for their state. Once approved, the member chooses a membership, pays through a simulated payment screen and receives a membership card. Members receive in-app notices. The master login sees all states.
@@ -16,13 +30,23 @@ This proof of concept shows the membership journey for the All India Congress Pa
 
 ## Running the app
 
-Requirements: macOS, Xcode with the iOS Simulator, and Flutter (stable channel).
+Requirements: Flutter (stable channel). For the browser: Google Chrome. For iPhone: macOS with Xcode and the iOS Simulator.
+
+**In Chrome (any laptop):**
 
 ```bash
-flutter pub get
-open -a Simulator
-flutter run
+./scripts/start.sh
 ```
+
+**In the iOS Simulator (macOS):**
+
+```bash
+./scripts/start.sh ios
+```
+
+Without the script: `flutter pub get`, then `flutter run -d chrome` (or `open -a Simulator` and `flutter run`).
+
+In Chrome, the membership photo uses the laptop webcam when the browser is allowed to use it. The Manmohan Singh Fellowship page opens as a link instead of inside the app.
 
 ## Demo access
 
