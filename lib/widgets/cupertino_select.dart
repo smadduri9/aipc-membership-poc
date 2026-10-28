@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../l10n/strings.dart';
 import '../theme.dart';
 
-/// Tappable form field that opens an iOS-style picker.
+/// Tappable form field that opens a native list sheet: tap a row to choose it. Long lists get a search field.
 class CupertinoSelect extends StatelessWidget {
   const CupertinoSelect({
     super.key,
@@ -31,42 +31,16 @@ class CupertinoSelect extends StatelessWidget {
 
   Future<void> _open(BuildContext context) async {
     if (!enabled || items.isEmpty) return;
-    final initial = items.contains(value) ? items.indexOf(value) : 0;
-    var chosen = initial;
-    final doneLabel = tRead(context, 'done');
-    await showCupertinoModalPopup<void>(
+    final picked = await showCupertinoModalPopup<String>(
       context: context,
-      builder: (sheetContext) => Container(
-        height: 300,
-        color: CupertinoColors.systemBackground.resolveFrom(sheetContext),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: CupertinoButton(
-                child: Text(doneLabel),
-                onPressed: () {
-                  onChanged(items[chosen]);
-                  Navigator.of(sheetContext).pop();
-                },
-              ),
-            ),
-            Expanded(
-              child: CupertinoPicker(
-                itemExtent: 36,
-                scrollController: FixedExtentScrollController(
-                  initialItem: initial,
-                ),
-                onSelectedItemChanged: (index) => chosen = index,
-                children: [
-                  for (final item in items) Center(child: Text(_label(item))),
-                ],
-              ),
-            ),
-          ],
-        ),
+      builder: (_) => _SelectSheet(
+        title: label,
+        items: items,
+        current: value,
+        display: _label,
       ),
     );
+    if (picked != null) onChanged(picked);
   }
 
   @override
@@ -86,6 +60,85 @@ class CupertinoSelect extends StatelessWidget {
           child: Text(
             hasValue ? _label(value) : t(context, 'select'),
             style: TextStyle(color: hasValue ? Colors.black : AppColors.grey),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectSheet extends StatefulWidget {
+  const _SelectSheet({
+    required this.title,
+    required this.items,
+    required this.current,
+    required this.display,
+  });
+
+  final String title;
+  final List<String> items;
+  final String current;
+  final String Function(String value) display;
+
+  @override
+  State<_SelectSheet> createState() => _SelectSheetState();
+}
+
+class _SelectSheetState extends State<_SelectSheet> {
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final searchable = widget.items.length > 8;
+    final shown = [
+      for (final item in widget.items)
+        if (widget.display(item).toLowerCase().contains(_query.toLowerCase()))
+          item,
+    ];
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.85,
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(widget.title),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(t(context, 'cancel')),
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              if (searchable)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: CupertinoSearchTextField(
+                    onChanged: (v) => setState(() => _query = v),
+                  ),
+                ),
+              Expanded(
+                child: ListView(
+                  children: [
+                    CupertinoListSection.insetGrouped(
+                      children: [
+                        for (final item in shown)
+                          CupertinoListTile(
+                            title: Text(widget.display(item)),
+                            trailing: item == widget.current
+                                ? const Icon(
+                                    CupertinoIcons.checkmark_alt,
+                                    color: AppColors.navy,
+                                  )
+                                : null,
+                            onTap: () => Navigator.of(context).pop(item),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

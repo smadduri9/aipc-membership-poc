@@ -14,6 +14,7 @@ import '../../theme.dart';
 import '../../utils/aadhaar.dart';
 import '../../utils/social_link.dart';
 import '../../widgets/cupertino_select.dart';
+import '../../widgets/demo_badge.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/selfie_capture.dart';
@@ -58,7 +59,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   PinIndex? _pinIndex;
   List<PinRecord> _pinOffices = const [];
+  _PinResult _pinResult = _PinResult.none;
   bool _prefilled = false;
+  late final VoidCallback _unregisterDemo;
   bool _consent = false;
   bool _submitting = false;
 
@@ -80,13 +83,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _instagram.text = d.instagramUrl ?? '';
     _linkedin.text = d.linkedinUrl ?? '';
     _facebook.text = d.facebookUrl ?? '';
+    _unregisterDemo = DemoFill.register(_onDemoTap);
     PinIndex.load().then((index) {
-      if (mounted) setState(() => _pinIndex = index);
+      if (!mounted) return;
+      _pinIndex = index;
+      if (_pin.text.length == 6) {
+        _onPinChanged(_pin.text, keepEdits: true);
+      } else {
+        setState(() {});
+      }
     });
   }
 
   @override
   void dispose() {
+    _unregisterDemo();
     for (final c in [
       _first,
       _last,
@@ -114,18 +125,61 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _err(String key) =>
       _errors[key] == null ? null : tRead(context, _errors[key]!);
 
-  /// Applies a PIN lookup: state, district and block are filled from the post office.
-  void _onPinChanged(String value) {
+  /// Demo badge: fills every step at once, so the presenter only taps Continue.
+  void _onDemoTap() {
+    _fillDemo(_draft);
+    _errors.clear();
+    _onPinChanged(_pin.text);
+  }
+
+  void _fillDemo(Application d) {
+    _first.text = d.firstName = 'Asha';
+    _last.text = d.lastName = 'Verma';
+    _aadhaar.text = '2345 6789 0124';
+    d.professionalDomain = 'Academia';
+    _pin.text = d.pinCode = '142026';
+    _tehsil.text = 'Jagraon';
+    _pc.text = 'Ludhiana';
+    _ac.text = 'Jagraon';
+    d.selfiePath = demoSelfie;
+    _instagram.text = 'https://www.instagram.com/ashaverma';
+    _consent = true;
+  }
+
+  /// Looks up the PIN. A known post office fills state, district, block and city.
+  /// An unknown PIN still fills the state from its prefix, and the member picks the district.
+  /// [keepEdits] restores the office list without overwriting what the member already typed.
+  void _onPinChanged(String value, {bool keepEdits = false}) {
     final d = _draft;
     d.pinCode = value;
+    _errors.remove('pin');
     _pinOffices = const [];
+    _pinResult = _PinResult.none;
     if (value.length == 6 && _pinIndex != null) {
       final offices = _pinIndex!.forPin(value);
+      final state = stateForPin(value);
       if (offices.isNotEmpty) {
-        _applyOffice(offices.first);
         _pinOffices = offices;
-        _prefilled = false;
+        _pinResult = _PinResult.found;
+        final current = offices.where((o) => o.office == _city.text);
+        if (!keepEdits || current.isEmpty) {
+          _applyOffice(current.isEmpty ? offices.first : current.first);
+        }
+      } else if (state != null) {
+        _pinResult = _PinResult.stateOnly;
+        if (!keepEdits || d.state != state) {
+          d.state = state;
+          d.stateOther = null;
+          _stateOther.clear();
+          d.district = '';
+          d.districtOther = null;
+          _districtOther.clear();
+        }
+      } else {
+        _pinResult = _PinResult.unknown;
       }
+      _errors.remove('state');
+      _errors.remove('district');
     }
     setState(() {});
   }
@@ -142,20 +196,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _block.text = r.block;
     d.cityVillage = r.office;
     _city.text = r.office;
+    _errors.remove('city');
   }
 
-  /// Demo only: pretends to read the address from Aadhaar.
+  /// Demo only: pretends to read the address from Aadhaar, then runs the normal PIN lookup.
   void _prefillFromAadhaar() {
-    final repo = context.read<MockRepository>();
-    final address = repo.lookupAadhaarAddress(_aadhaar.text);
-    final d = _draft;
-    d.state = address.state;
-    d.district = address.district;
-    d.pinCode = address.pin;
-    d.cityVillage = address.cityVillage;
+    if (!isValidAadhaar(_aadhaar.text)) return;
+    final address = context.read<MockRepository>().lookupAadhaarAddress(
+      _aadhaar.text,
+    );
     _pin.text = address.pin;
-    _city.text = address.cityVillage;
-    setState(() => _prefilled = true);
+    _prefilled = true;
+    _onPinChanged(address.pin);
+  }
+
+  /// Districts for a state: the reference list plus every district in the PIN table, sorted, then Other.
+  List<String> _districtsFor(String code) {
+    final all = <String>{
+      ...?regionByCode(code)?.districts,
+      ...?_pinIndex?.districtsIn(code),
+      if (_draft.district.isNotEmpty && _draft.district != otherOption)
+        _draft.district,
+    }.toList()..sort();
+    return [...all, otherOption];
   }
 
   bool _validate() {
@@ -181,7 +244,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (d.state == 'OT' && _stateOther.text.trim().length < 2) {
           _errors['state'] = 'err_required';
         }
-        if (d.district.isEmpty && _districtOther.text.trim().isEmpty) {
+        if (d.state == 'OT' || d.district == otherOption) {
+          if (_districtOther.text.trim().length < 2) {
+            _errors['district'] = 'err_required';
+          }
+        } else if (d.district.isEmpty) {
           _errors['district'] = 'err_select';
         }
         if (_city.text.trim().length < 2) _errors['city'] = 'err_required';
@@ -222,6 +289,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       case 1:
         d.pinCode = _pin.text;
         d.stateOther = d.state == 'OT' ? _stateOther.text.trim() : null;
+        if (d.state == 'OT') d.district = otherOption;
         d.districtOther = d.district == otherOption
             ? _districtOther.text.trim()
             : null;
@@ -308,11 +376,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // A new key per step starts each step at the top instead of keeping the previous scroll position.
                   key: ValueKey(_step),
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                  children: switch (_step) {
-                    0 => _identity(),
-                    1 => _location(),
-                    _ => _selfieAndSocial(),
-                  },
+                  children: [
+                    ...switch (_step) {
+                      0 => _identity(),
+                      1 => _location(),
+                      _ => _selfieAndSocial(),
+                    },
+                  ],
                 ),
               ),
               Padding(
@@ -382,21 +452,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   List<Widget> _location() {
     final d = _draft;
     final region = regionByCode(d.state);
-    final stateNames = [for (final r in regions) r.name, t(context, 'other')];
-    final currentStateName = d.state == 'OT'
-        ? t(context, 'other')
-        : (region?.name ?? '');
-    final districts = [...?region?.districts, t(context, 'other')];
+    final other = t(context, 'other');
+    final stateNames = [for (final r in regions) r.name, other];
+    final currentStateName = d.state == 'OT' ? other : (region?.name ?? '');
     return [
       if (_prefilled)
-        Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEAF4EA),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(t(context, 'prefilled_demo')),
+        _Notice(
+          icon: CupertinoIcons.checkmark_seal_fill,
+          text: t(context, 'prefilled_demo'),
         ),
       _field(
         t(context, 'pin_code'),
@@ -405,69 +468,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
         errorKey: 'pin',
         maxLength: 6,
         onChanged: _onPinChanged,
-        helper:
-            _pinIndex != null && _pin.text.length == 6 && _pinOffices.isEmpty
-            ? t(context, 'pin_not_found')
-            : null,
       ),
+      if (_pinResult == _PinResult.found)
+        _Notice(
+          icon: CupertinoIcons.location_solid,
+          text:
+              '${t(context, 'pin_found')}: ${_city.text}, ${d.district}, ${region?.name ?? ''}',
+        ),
+      if (_pinResult == _PinResult.stateOnly)
+        _Notice(
+          icon: CupertinoIcons.location,
+          text: '${region?.name ?? ''}. ${t(context, 'pin_state_only')}',
+        ),
+      if (_pinResult == _PinResult.unknown)
+        _Notice(
+          icon: CupertinoIcons.exclamationmark_circle,
+          text: t(context, 'pin_unknown'),
+          warning: true,
+        ),
       if (_pinOffices.length > 1)
+        _gap(
+          CupertinoSelect(
+            label: t(context, 'pin_pick_office'),
+            value: _city.text,
+            items: [for (final o in _pinOffices) o.office],
+            onChanged: (v) => setState(
+              () => _applyOffice(_pinOffices.firstWhere((o) => o.office == v)),
+            ),
+          ),
+        ),
+      const SizedBox(height: 4),
+      Text(t(context, 'address_section'), style: AppText.sectionTitle),
+      const SizedBox(height: 8),
+      _gap(
         CupertinoSelect(
-          label: t(context, 'pin_pick_office'),
-          value: _city.text,
-          items: [for (final o in _pinOffices) o.office],
+          label: t(context, 'state_ut'),
+          value: currentStateName,
+          items: stateNames,
+          error: _err('state'),
           onChanged: (v) => setState(() {
-            final r = _pinOffices.firstWhere((o) => o.office == v);
-            _applyOffice(r);
+            final code = v == other
+                ? 'OT'
+                : regions.firstWhere((r) => r.name == v).code;
+            if (code == d.state) return;
+            d.state = code;
+            d.district = '';
+            d.districtOther = null;
+            _districtOther.clear();
+            _errors.remove('state');
           }),
         ),
-      CupertinoSelect(
-        label: t(context, 'state_ut'),
-        value: currentStateName,
-        items: stateNames,
-        error: _err('state'),
-        onChanged: (v) => setState(() {
-          if (v == t(context, 'other')) {
-            d.state = 'OT';
-          } else {
-            d.state = regions.firstWhere((r) => r.name == v).code;
-          }
-          d.district = '';
-          d.districtOther = null;
-          _districtOther.clear();
-          d.stateOther = d.state == 'OT' ? _stateOther.text : null;
-        }),
       ),
       if (d.state == 'OT')
         _field(t(context, 'state_other'), _stateOther, errorKey: 'state'),
       if (d.state.isNotEmpty && d.state != 'OT')
-        CupertinoSelect(
-          label: t(context, 'district'),
-          value: d.district,
-          items: districts,
-          error: _err('district'),
-          onChanged: (v) => setState(() {
-            if (v == t(context, 'other')) {
-              d.district = otherOption;
-            } else {
+        _gap(
+          CupertinoSelect(
+            label: t(context, 'district'),
+            value: d.district,
+            items: _districtsFor(d.state),
+            error: _err('district'),
+            onChanged: (v) => setState(() {
               d.district = v;
-              d.districtOther = null;
-              _districtOther.clear();
-            }
-          }),
+              if (v != otherOption) {
+                d.districtOther = null;
+                _districtOther.clear();
+              }
+              _errors.remove('district');
+            }),
+          ),
         ),
-      if (d.district == otherOption)
+      if (d.state == 'OT' || d.district == otherOption)
         _field(
           t(context, 'district_other'),
           _districtOther,
           errorKey: 'district',
         ),
-      _field(t(context, 'tehsil'), _tehsil, optional: true),
-      _field(t(context, 'block'), _block, optional: true),
       _field(t(context, 'city_village'), _city, errorKey: 'city'),
-      _field(t(context, 'parliamentary'), _pc, optional: true),
-      _field(t(context, 'assembly'), _ac, optional: true),
+      const SizedBox(height: 4),
+      Text(t(context, 'more_details'), style: AppText.sectionTitle),
+      const SizedBox(height: 8),
+      _field(t(context, 'tehsil'), _tehsil),
+      _field(t(context, 'block'), _block),
+      _field(t(context, 'parliamentary'), _pc),
+      _field(t(context, 'assembly'), _ac),
     ];
   }
+
+  Widget _gap(Widget child) =>
+      Padding(padding: const EdgeInsets.only(bottom: 14), child: child);
 
   List<Widget> _selfieAndSocial() {
     final d = _draft;
@@ -709,6 +798,40 @@ class _DomainSheetState extends State<_DomainSheet> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+enum _PinResult { none, found, stateOnly, unknown }
+
+/// Soft coloured note above or below a field, for example the PIN lookup result.
+class _Notice extends StatelessWidget {
+  const _Notice({required this.icon, required this.text, this.warning = false});
+
+  final IconData icon;
+  final String text;
+  final bool warning;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = warning ? const Color(0xFF9A5B00) : const Color(0xFF1E6B34);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: warning ? const Color(0xFFFFF4E0) : const Color(0xFFEAF4EA),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(text, style: TextStyle(color: color)),
+          ),
+        ],
       ),
     );
   }

@@ -13,6 +13,7 @@ import '../../utils/format.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
+import '../../utils/pdf_documents.dart';
 
 class MembershipCardScreen extends StatelessWidget {
   const MembershipCardScreen({super.key});
@@ -23,7 +24,7 @@ class MembershipCardScreen extends StatelessWidget {
     final repo = context.watch<MockRepository>();
     final app = repo.findByPhone(phone);
     return Scaffold(
-      appBar: AppBar(title: const Text('AIPC'), actions: const [NavActions()]),
+      appBar: AppBar(title: const Text('AICP'), actions: const [NavActions()]),
       body: SafeArea(
         child: app == null
             ? const Center(child: Text('—'))
@@ -35,11 +36,13 @@ class MembershipCardScreen extends StatelessWidget {
                   Center(child: _FakeQr(seed: app.referenceNo)),
                   const SizedBox(height: 20),
                   PrimaryButton(
-                    label: t(context, 'share'),
-                    color: AppColors.grey,
-                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(t(context, 'share_disabled'))),
-                    ),
+                    label: t(context, 'download_card'),
+                    onPressed: () => shareCard(app),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => shareReceipt(app),
+                    child: Text(t(context, 'download_receipt')),
                   ),
                 ],
               ),
@@ -74,7 +77,7 @@ class _CardFace extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'AIPC',
+              'AICP',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,

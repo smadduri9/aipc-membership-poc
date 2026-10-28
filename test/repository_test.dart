@@ -16,7 +16,7 @@ void main() {
     () async {
       final repo = MockRepository();
       final app = await repo.submit(_draft());
-      expect(app.referenceNo, 'AIPC-PB-26-000101');
+      expect(app.referenceNo, 'AICP-PB-26-000101');
     },
   );
 

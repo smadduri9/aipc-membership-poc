@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:aipc_poc/screens/member/register_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:aipc_poc/data/mock_repository.dart';
@@ -8,7 +10,7 @@ import 'package:aipc_poc/router.dart';
 import 'package:aipc_poc/state/app_state.dart';
 
 void main() {
-  testWidgets('member can log in with demo credentials and reach home', (
+  testWidgets('first sign-in with the demo number opens the application form', (
     tester,
   ) async {
     // Landing is covered in landing_test.dart; this flow starts at language.
@@ -38,11 +40,10 @@ void main() {
     await tester.tap(find.text('सदस्य'));
     await tester.pump(const Duration(milliseconds: 300));
 
-    // Phone: send button stays disabled until number and consent are given.
-    await tester.enterText(find.byType(CupertinoTextField).first, '9876543210');
+    // Phone: the DEMO badge fills the demo number and consent.
+    await tester.tap(find.text('DEMO'));
     await tester.pump();
-    await tester.tap(find.byType(CupertinoSwitch));
-    await tester.pump();
+    expect(find.text('9876543210'), findsOneWidget);
     await tester.tap(find.text('OTP भेजें'));
     await tester.pump(const Duration(milliseconds: 800));
     await tester.pump(const Duration(milliseconds: 300));
@@ -64,7 +65,7 @@ void main() {
     await tester.tap(find.text('सत्यापित करें'));
     await tester.pump(const Duration(milliseconds: 700));
     await tester.pump();
-    expect(find.textContaining('नमस्ते'), findsOneWidget);
-    expect(find.text('सदस्य बनें'), findsOneWidget);
+    // A first sign-in goes straight to the application form.
+    expect(find.byType(RegisterScreen), findsOneWidget);
   });
 }

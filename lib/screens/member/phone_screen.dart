@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/mock_repository.dart';
+import '../../config.dart';
+import '../../widgets/demo_badge.dart';
 import '../../l10n/strings.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';
 import '../../utils/indian_phone.dart';
 import '../../widgets/nav_actions.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/flag_watermark.dart';
 
 class PhoneScreen extends StatefulWidget {
   const PhoneScreen({super.key});
@@ -23,14 +26,23 @@ class _PhoneScreenState extends State<PhoneScreen> {
   bool _consent = false;
   bool _sending = false;
 
+  late final VoidCallback _unregisterDemo;
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(() => setState(() {}));
+    _unregisterDemo = DemoFill.register(
+      () => setState(() {
+        _controller.text = kDemoPhone;
+        _consent = true;
+      }),
+    );
   }
 
   @override
   void dispose() {
+    _unregisterDemo();
     _controller.dispose();
     super.dispose();
   }
@@ -50,80 +62,78 @@ class _PhoneScreenState extends State<PhoneScreen> {
     final text = _controller.text;
     final showError = text.length == 10 && !isValidMobile(text);
     final canSend = isValidMobile(text) && _consent;
-    return Scaffold(
-      appBar: AppBar(actions: const [NavActions()]),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(t(context, 'enter_phone'), style: AppText.largeTitle),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.grouped,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Text('+91', style: TextStyle(fontSize: 18)),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CupertinoTextField(
-                      controller: _controller,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
-                      placeholder: '9XXXXXXXXX',
-                      padding: const EdgeInsets.all(14),
-                      autofillHints: const [
-                        AutofillHints.telephoneNumberNational,
-                      ],
+    return FlagWatermark(
+      child: Scaffold(
+        appBar: AppBar(actions: const [NavActions()]),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(t(context, 'enter_phone'), style: AppText.largeTitle),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.grouped,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      style: const TextStyle(fontSize: 18),
+                      child: const Text('+91', style: TextStyle(fontSize: 18)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CupertinoTextField(
+                        controller: _controller,
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        placeholder: '9XXXXXXXXX',
+                        padding: const EdgeInsets.all(14),
+                        autofillHints: const [
+                          AutofillHints.telephoneNumberNational,
+                        ],
+                        decoration: BoxDecoration(
+                          color: AppColors.grouped,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
+                ),
+                if (showError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      t(context, 'err_phone'),
+                      style: const TextStyle(color: AppColors.red),
                     ),
                   ),
-                ],
-              ),
-              if (showError)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Text(
-                    t(context, 'err_phone'),
-                    style: const TextStyle(color: AppColors.red),
-                  ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    CupertinoSwitch(
+                      value: _consent,
+                      onChanged: (v) => setState(() => _consent = v),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(t(context, 'consent_text'))),
+                  ],
                 ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  CupertinoSwitch(
-                    value: _consent,
-                    onChanged: (v) => setState(() => _consent = v),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(t(context, 'consent_text'))),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                t(context, 'demo_phone_hint'),
-                style: const TextStyle(color: AppColors.grey),
-              ),
-              const Spacer(),
-              PrimaryButton(
-                label: t(context, 'send_otp'),
-                loading: _sending,
-                onPressed: canSend ? _sendOtp : null,
-              ),
-            ],
+                const SizedBox(height: 8),
+                const Spacer(),
+                PrimaryButton(
+                  label: t(context, 'send_otp'),
+                  loading: _sending,
+                  onPressed: canSend ? _sendOtp : null,
+                ),
+              ],
+            ),
           ),
         ),
       ),

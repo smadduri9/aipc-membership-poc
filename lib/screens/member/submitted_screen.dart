@@ -52,8 +52,8 @@ class SubmittedScreen extends StatelessWidget {
               ),
               const Spacer(),
               PrimaryButton(
-                label: t(context, 'track_application'),
-                onPressed: () => context.go('/home/status'),
+                label: t(context, 'back'),
+                onPressed: () => context.go('/home'),
               ),
             ],
           ),

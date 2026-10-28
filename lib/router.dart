@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'screens/admin/admin_audit_screen.dart';
 import 'screens/admin/admin_dashboard_screen.dart';
 import 'screens/admin/admin_detail_screen.dart';
+import 'screens/admin/admin_review_screen.dart';
 import 'screens/admin/admin_list_screen.dart';
 import 'screens/admin/admin_login_screen.dart';
 import 'screens/member/home_screen.dart';
@@ -127,6 +128,18 @@ GoRouter buildRouter() {
                   final code = state.pathParameters['code'] ?? '';
                   return StateDashboardScreen(stateCode: code, asMaster: true);
                 },
+              ),
+              GoRoute(
+                path: 'review',
+                builder: (context, state) => AdminReviewScreen(
+                  stateCode: state.uri.queryParameters['state'],
+                ),
+              ),
+              GoRoute(
+                path: 'approved/:ref',
+                builder: (context, state) => AdminApprovedScreen(
+                  referenceNo: state.pathParameters['ref'] ?? '',
+                ),
               ),
               GoRoute(
                 path: 'list',

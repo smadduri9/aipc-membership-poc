@@ -76,12 +76,12 @@ class StatusScreen extends StatelessWidget {
             const SizedBox(height: 16),
             if (app.status == AppStatus.approved)
               PrimaryButton(
-                label: 'Choose membership',
+                label: t(context, 'pay_cta'),
                 onPressed: () => context.push('/home/membership'),
               ),
             if (app.status == AppStatus.awaitingPayment)
               PrimaryButton(
-                label: 'Review and pay',
+                label: t(context, 'pay_now_cta'),
                 onPressed: () => context.push('/home/review'),
               ),
             if (app.status == AppStatus.paymentFailed)

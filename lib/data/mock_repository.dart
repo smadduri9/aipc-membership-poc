@@ -4,19 +4,58 @@ import 'package:flutter/foundation.dart';
 
 import '../models/application.dart';
 import '../models/notification.dart';
+import 'demo_store.dart';
 import 'mock_data.dart';
 
-/// In-memory stand-in for a backend. Every call waits briefly so the UI feels real.
-/// Data resets when the app restarts.
+/// Stand-in for a backend. Every call waits briefly so the UI feels real.
+/// With [onSave] set (the app does this), every change is saved, so the demo survives a restart.
 class MockRepository extends ChangeNotifier {
-  MockRepository() : applications = seedApplications(), auditLog = [] {
-    auditLog.addAll(seedAuditEntries(applications));
+  MockRepository({DemoSnapshot? restore, this.onSave})
+    : applications = [],
+      auditLog = [] {
+    if (restore != null) {
+      applications.addAll(restore.applications);
+      auditLog.addAll(restore.audit);
+      notifications.addAll(restore.notices);
+      _nextSeq = restore.nextSeq;
+    } else {
+      _seed();
+    }
   }
 
   final List<Application> applications;
   final List<AuditEntry> auditLog;
   final List<AppNotification> notifications = [];
   int _nextSeq = 101;
+
+  /// Receives the encoded demo data after every change.
+  final void Function(String json)? onSave;
+
+  void _seed() {
+    applications
+      ..clear()
+      ..addAll(seedApplications());
+    auditLog
+      ..clear()
+      ..addAll(seedAuditEntries(applications));
+    notifications.clear();
+    _nextSeq = 101;
+  }
+
+  @override
+  void notifyListeners() {
+    onSave?.call(
+      DemoSnapshot(applications, auditLog, notifications, _nextSeq).encode(),
+    );
+    super.notifyListeners();
+  }
+
+  /// Puts the seed data back, as on a fresh install.
+  Future<void> resetDemo() async {
+    _seed();
+    notifyListeners();
+  }
+
   final _random = Random();
 
   Future<void> _wait() => Future.delayed(const Duration(milliseconds: 600));
@@ -54,7 +93,7 @@ class MockRepository extends ChangeNotifier {
   Future<Application> submit(Application draft) async {
     await _wait();
     draft.referenceNo =
-        'AIPC-${draft.state}-26-${_nextSeq.toString().padLeft(6, '0')}';
+        'AICP-${draft.state}-26-${_nextSeq.toString().padLeft(6, '0')}';
     _nextSeq++;
     draft.status = AppStatus.submitted;
     draft.rejectReason = null;
@@ -176,6 +215,21 @@ class MockRepository extends ChangeNotifier {
           a.name.toLowerCase().contains(q);
     }).toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return result;
+  }
+
+  /// Submitted applications in the viewer's scope that arrived after [since] and are not in [seen].
+  /// Pass [stateCode] to look at one state, for example when the master opens a state.
+  List<Application> newApplications(
+    AdminUser viewer,
+    DateTime since,
+    Set<String> seen, {
+    String? stateCode,
+  }) {
+    return search(state: stateCode, status: AppStatus.submitted, viewer: viewer)
+        .where(
+          (a) => a.createdAt.isAfter(since) && !seen.contains(a.referenceNo),
+        )
+        .toList();
   }
 
   /// Totals for a dashboard. Pass a state code for a state view, or null for all states.
